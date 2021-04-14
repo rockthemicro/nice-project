@@ -30,6 +30,9 @@ public class User {
     @Column(nullable = false)
     private RoleEnum role;
 
+    @Column
+    private Integer preferredWorkingHours;
+
     @Getter
     public enum RoleEnum {
         USER ("USER"),
