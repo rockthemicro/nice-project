@@ -1,5 +1,6 @@
 package com.alexandru.timemanagement.security;
 
+import com.alexandru.timemanagement.model.User;
 import com.alexandru.timemanagement.service.DBUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static com.alexandru.timemanagement.security.SecurityConstants.USER_API;
+import static com.alexandru.timemanagement.security.SecurityConstants.API_USER;
+import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_CREATE_OR_UPDATE_FOR_USER;
 
 @EnableWebSecurity
 @AllArgsConstructor
@@ -30,9 +32,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers(USER_API).permitAll()
-                    .antMatchers("/api/test/ping-manager").hasAuthority("MANAGER")
-                    .antMatchers("/api/test/ping-admin").hasAuthority("ADMIN")
+                    .antMatchers(API_USER).permitAll()
+                    .antMatchers(ENDPOINT_CREATE_OR_UPDATE_FOR_USER).hasAuthority(User.RoleEnum.ADMIN.toString())
+                    .antMatchers("/api/test/ping-manager").hasAuthority(User.RoleEnum.MANAGER.toString())
+                    .antMatchers("/api/test/ping-admin").hasAuthority(User.RoleEnum.ADMIN.toString())
                     .anyRequest().authenticated()
                     .and()
                 .exceptionHandling().and()
