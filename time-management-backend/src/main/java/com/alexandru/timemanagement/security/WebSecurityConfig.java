@@ -31,6 +31,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers(USER_API).permitAll()
+                    .antMatchers("/api/test/ping-manager").hasAuthority("MANAGER")
+                    .antMatchers("/api/test/ping-admin").hasAuthority("ADMIN")
                     .anyRequest().authenticated()
                     .and()
                 .exceptionHandling().and()

@@ -12,4 +12,14 @@ public class TestController {
     public String ping() {
         return "pong";
     }
+
+    @GetMapping("ping-manager")
+    public String pingManager() {
+        return "pong-manager";
+    }
+
+    @GetMapping("ping-admin")
+    public String pingAdmin() {
+        return "pong-admin";
+    }
 }
