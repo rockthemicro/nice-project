@@ -54,7 +54,11 @@ public class UserController {
     @RequestMapping(value = "/manage/deleteUser",
                     method = RequestMethod.DELETE)
     public ResponseEntity<Output> deleteUser(@RequestParam Integer userId) {
-        return null;
+        Output output = userService.deleteUser(userId);
+
+        return ResponseEntity
+                .ok()
+                .body(output);
     }
 
     @RequestMapping(value = "/manage/getUser",

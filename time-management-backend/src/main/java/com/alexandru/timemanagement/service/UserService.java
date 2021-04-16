@@ -122,6 +122,25 @@ public class UserService {
         return output;
     }
 
+    public Output deleteUser(Integer userId) {
+        Output output = new Output();
+        User user = userRepository.findById(userId)
+                .orElseThrow();
+        User.RoleEnum curUserRole = getCurUserRole();
+
+        if (curUserRole.equals(User.RoleEnum.MANAGER) &&
+                user.getRole().equals(User.RoleEnum.ADMIN)) {
+
+            output.setStatusEnum(Output.StatusEnum.ERROR);
+            output.addMessage(Output.StatusEnum.ERROR, "You don't have sufficient permissions");
+            return output;
+        }
+
+        userRepository.deleteById(userId);
+
+        return output;
+    }
+
     public GetUserOutput getUser(String username) {
         GetUserOutput output = new GetUserOutput();
 
