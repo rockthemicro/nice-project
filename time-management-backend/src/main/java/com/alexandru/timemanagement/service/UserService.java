@@ -32,13 +32,19 @@ public class UserService {
     private final DBUserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final static String USERNAME_EXISTS = "Username already exists!";
+    private final static String USERNAME_NOT_FOUND = "Username not found!";
+    private final static String REGISTERING_ERROR = "An error occurred while registering the user!";
+    private final static String INCORRECT_CREDS = "Incorrect username or password!";
+    private final static String INSUFFICIENT_PERMISSIONS = "You don't have sufficient permissions!";
+
     public Output registerUser(RegisterInput registerInput) {
         Output result = new Output();
 
         Optional<User> optionalUser = userRepository.findByUsername(registerInput.getUsername());
         if (optionalUser.isPresent()) {
             result.setStatusEnum(Output.StatusEnum.ERROR);
-            result.addMessage(Output.StatusEnum.ERROR, "Username already exists!");
+            result.addMessage(Output.StatusEnum.ERROR, USERNAME_EXISTS);
             return result;
         }
 
@@ -52,7 +58,7 @@ public class UserService {
         newUser = userRepository.save(newUser);
         if (newUser.getId() == 0) {
             result.setStatusEnum(Output.StatusEnum.ERROR);
-            result.addMessage(Output.StatusEnum.ERROR, "An error occurred while registering the user!");
+            result.addMessage(Output.StatusEnum.ERROR, REGISTERING_ERROR);
         }
 
         return result;
@@ -67,7 +73,7 @@ public class UserService {
         catch (BadCredentialsException e) {
             AuthOutput result = new AuthOutput();
             result.setStatusEnum(Output.StatusEnum.ERROR);
-            result.addMessage(Output.StatusEnum.ERROR, "Incorrect username or password!");
+            result.addMessage(Output.StatusEnum.ERROR, INCORRECT_CREDS);
 
             return result;
         }
@@ -103,7 +109,7 @@ public class UserService {
                      userDto.getRole().equals(User.RoleEnum.ADMIN))) {
 
                 output.setStatusEnum(Output.StatusEnum.ERROR);
-                output.addMessage(Output.StatusEnum.ERROR, "You don't have sufficient permissions");
+                output.addMessage(Output.StatusEnum.ERROR, INSUFFICIENT_PERMISSIONS);
                 return output;
             }
 
@@ -131,7 +137,7 @@ public class UserService {
                 user.getRole().equals(User.RoleEnum.ADMIN)) {
 
             output.setStatusEnum(Output.StatusEnum.ERROR);
-            output.addMessage(Output.StatusEnum.ERROR, "You don't have sufficient permissions");
+            output.addMessage(Output.StatusEnum.ERROR, INSUFFICIENT_PERMISSIONS);
             return output;
         }
 
@@ -147,7 +153,7 @@ public class UserService {
 
         if (userOpt.isEmpty()) {
             output.setStatusEnum(Output.StatusEnum.ERROR);
-            output.addMessage(Output.StatusEnum.ERROR, "Username not found.");
+            output.addMessage(Output.StatusEnum.ERROR, USERNAME_NOT_FOUND);
             return output;
         }
 

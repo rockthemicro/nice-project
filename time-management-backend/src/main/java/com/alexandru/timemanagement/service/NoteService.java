@@ -31,6 +31,7 @@ public class NoteService {
             + " you possess no Notes of your own.";
     private static final String YOU_CANT_CHANGE_NOTES = "You cannot change Notes for"
             + " privileged users.";
+    private static final String ERROR_UPDATE_NOTE = "Error updating this note.";
 
     public Output createOrUpdateNote(NoteDto noteDto) {
         Output output;
@@ -161,7 +162,7 @@ public class NoteService {
 
             if (noteOpt.isEmpty()) {
                 output.setStatusEnum(Output.StatusEnum.ERROR);
-                output.addMessage(Output.StatusEnum.ERROR, "Error updating this note.");
+                output.addMessage(Output.StatusEnum.ERROR, ERROR_UPDATE_NOTE);
                 return output;
             }
         }
