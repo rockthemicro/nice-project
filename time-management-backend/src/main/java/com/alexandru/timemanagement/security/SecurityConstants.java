@@ -6,5 +6,6 @@ public class SecurityConstants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
     public static final String API_USER = "/api/user/**";
-    public static final String ENDPOINT_CREATE_OR_UPDATE_FOR_USER = "/api/note/createOrUpdateForUser";
+    public static final String ENDPOINT_CREATE_OR_UPDATE_NOTE_FOR_USER = "/api/note/createOrUpdateForUser";
+    public static final String ENDPOINT_GET_NOTES_FOR_USER = "/api/note/createOrUpdateForUser";
 }
