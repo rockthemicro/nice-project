@@ -2,7 +2,9 @@ package com.alexandru.timemanagement;
 
 import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.dto.output.AuthOutput;
+import com.alexandru.timemanagement.dto.output.RegisterOutput;
 import com.alexandru.timemanagement.model.User;
+import com.alexandru.timemanagement.model.mapper.UserMapper;
 import com.alexandru.timemanagement.repository.NoteRepository;
 import com.alexandru.timemanagement.repository.UserRepository;
 import com.alexandru.timemanagement.security.SecurityConstants;
@@ -51,6 +53,7 @@ class TimeManagementApplicationTests {
 	private ObjectMapper objectMapper;
 
 	private static boolean initiatedTokens = false;
+	/* 3 tokens; 1st is regular user, 2nd is manager, 3rd is admin */
 	private static final List<String> tokens = new ArrayList<>();
 	private final List<User> users = new ArrayList<>();
 
@@ -122,18 +125,36 @@ class TimeManagementApplicationTests {
 		RegisterInput ri = new RegisterInput("foo", "bar");
 		String riString = objectMapper.writeValueAsString(ri);
 
-		mockMvc
+		MvcResult mvcResult = mockMvc
 				.perform(post("/api/user/register")
 						.contentType(APPLICATION_JSON)
 						.content(riString))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andReturn();
+
+		/* make sure the newly created user is cleaned up at the end */
+		String content = mvcResult.getResponse().getContentAsString();
+		RegisterOutput registerOutput = objectMapper.readValue(content, RegisterOutput.class);
+		users.add(UserMapper.INSTANCE.userDtoToUser(registerOutput.getUser()));
 
 		String token = performAuthAndGetToken("foo", "bar");
 		mockMvc
 				.perform(get("/api/test/ping")
 						.header(SecurityConstants.HEADER_STRING,
 								SecurityConstants.TOKEN_PREFIX + token))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andReturn();
+
+	}
+
+	@Test
+	void testRegularUserAttemptsDeleteUser() throws Exception {
+		mockMvc
+				.perform(get("/api/user/manage/deleteUser")
+						.header(SecurityConstants.HEADER_STRING,
+								SecurityConstants.TOKEN_PREFIX + tokens.get(0))
+						.param("userId", String.valueOf(users.get(0).getId())))
+				.andExpect(status().is(403));
 	}
 
 	private void initiateTokens() throws Exception {

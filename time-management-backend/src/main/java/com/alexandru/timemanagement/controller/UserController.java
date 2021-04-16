@@ -6,6 +6,7 @@ import com.alexandru.timemanagement.dto.output.AuthOutput;
 import com.alexandru.timemanagement.dto.output.GetUserOutput;
 import com.alexandru.timemanagement.dto.output.Output;
 import com.alexandru.timemanagement.dto.input.RegisterInput;
+import com.alexandru.timemanagement.dto.output.RegisterOutput;
 import com.alexandru.timemanagement.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +33,8 @@ public class UserController {
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity<Output> registerUser(@RequestBody RegisterInput registerInput) {
-        Output output = userService.registerUser(registerInput);
+    public ResponseEntity<RegisterOutput> registerUser(@RequestBody RegisterInput registerInput) {
+        RegisterOutput output = userService.registerUser(registerInput);
 
         return ResponseEntity
                 .ok()

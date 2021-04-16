@@ -6,6 +6,7 @@ import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.dto.output.AuthOutput;
 import com.alexandru.timemanagement.dto.output.GetUserOutput;
 import com.alexandru.timemanagement.dto.output.Output;
+import com.alexandru.timemanagement.dto.output.RegisterOutput;
 import com.alexandru.timemanagement.model.User;
 import com.alexandru.timemanagement.model.mapper.UserMapper;
 import com.alexandru.timemanagement.repository.UserRepository;
@@ -38,8 +39,8 @@ public class UserService {
     private final static String INCORRECT_CREDS = "Incorrect username or password!";
     private final static String INSUFFICIENT_PERMISSIONS = "You don't have sufficient permissions!";
 
-    public Output registerUser(RegisterInput registerInput) {
-        Output result = new Output();
+    public RegisterOutput registerUser(RegisterInput registerInput) {
+        RegisterOutput result = new RegisterOutput();
 
         Optional<User> optionalUser = userRepository.findByUsername(registerInput.getUsername());
         if (optionalUser.isPresent()) {
@@ -59,6 +60,11 @@ public class UserService {
         if (newUser.getId() == 0) {
             result.setStatusEnum(Output.StatusEnum.ERROR);
             result.addMessage(Output.StatusEnum.ERROR, REGISTERING_ERROR);
+        } else {
+            UserDto userDto = UserMapper.INSTANCE.userToUserDto(newUser);
+            userDto.setPassword(null);
+
+            result.setUser(userDto);
         }
 
         return result;
