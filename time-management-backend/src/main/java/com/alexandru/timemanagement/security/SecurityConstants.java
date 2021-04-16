@@ -7,6 +7,7 @@ public class SecurityConstants {
     public static final String HEADER_STRING = "Authorization";
     public static final String API_USER = "/api/user/**";
     public static final String API_USER_MANAGE = "/api/user/manage/**";
+    public static final String ENDPOINT_SELF_UPDATE_USER = "/api/user/selfUpdate";
     public static final String ENDPOINT_CREATE_OR_UPDATE_NOTE_FOR_USER = "/api/note/createOrUpdateForUser";
     public static final String ENDPOINT_GET_NOTES_FOR_USER = "/api/note/createOrUpdateForUser";
     public static final String ENDPOINT_DELETE_NOTES_FOR_USER = "/api/note/deleteNotesForUser";

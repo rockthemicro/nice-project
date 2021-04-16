@@ -229,6 +229,30 @@ class TimeManagementApplicationTests {
 		assertThat(regularUserDto.getRole()).isEqualTo(regularUser.getRole());
 	}
 
+	@Test
+	public void testSelfUpdate() throws Exception {
+		User regularUser = perTestUsers.get(0);
+		String regularUserPassword = regularUser.getPassword();
+		String regularUserToken = tokens.get(0);
+
+		UserDto userDto = UserMapper.INSTANCE.userToUserDto(regularUser);
+		userDto.setPassword(null);
+		userDto.setPreferredWorkingHours(1000);
+
+		mockMvc
+				.perform(post("/api/user/selfUpdate")
+						.header(SecurityConstants.HEADER_STRING,
+								SecurityConstants.TOKEN_PREFIX + regularUserToken)
+						.contentType(APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userDto)))
+				.andExpect(status().isOk());
+
+		regularUser = userRepository.findById(regularUser.getId()).orElseThrow();
+
+		assertThat(regularUser.getPassword()).isEqualTo(regularUserPassword);
+		assertThat(regularUser.getPreferredWorkingHours()).isEqualTo(1000);
+	}
+
 	private void initiateTokens() throws Exception {
 		for (String username : new String[] {"user1", "user2", "user3"}) {
 			String token = performAuthAndGetToken(username, "passwd");

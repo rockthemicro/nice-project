@@ -22,6 +22,7 @@ import static com.alexandru.timemanagement.security.SecurityConstants.API_USER_M
 import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_CREATE_OR_UPDATE_NOTE_FOR_USER;
 import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_DELETE_NOTES_FOR_USER;
 import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_GET_NOTES_FOR_USER;
+import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_SELF_UPDATE_USER;
 
 @EnableWebSecurity
 @AllArgsConstructor
@@ -35,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
+                    .antMatchers(ENDPOINT_SELF_UPDATE_USER).authenticated()
                     .antMatchers(API_USER_MANAGE).hasAnyAuthority(User.RoleEnum.ADMIN.toString(),
                                                                   User.RoleEnum.MANAGER.toString())
                     .antMatchers(API_USER).permitAll()

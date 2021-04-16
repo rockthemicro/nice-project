@@ -41,6 +41,15 @@ public class UserController {
                 .body(output);
     }
 
+    @PostMapping(value = "/selfUpdate")
+    public ResponseEntity<Output> selfUpdate(@RequestBody UserDto userDto) {
+        Output output = userService.selfUpdate(userDto);
+
+        return ResponseEntity
+                .ok()
+                .body(output);
+    }
+
     @RequestMapping(value = "/manage/createOrUpdate",
                     method = {RequestMethod.POST,
                               RequestMethod.PUT})

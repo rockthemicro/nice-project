@@ -18,9 +18,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Optional;
 
+import static com.alexandru.timemanagement.utils.Commons.getCurUserDetails;
 import static com.alexandru.timemanagement.utils.Commons.getCurUserRole;
 
 
@@ -38,6 +40,7 @@ public class UserService {
     private final static String REGISTERING_ERROR = "An error occurred while registering the user!";
     private final static String INCORRECT_CREDS = "Incorrect username or password!";
     private final static String INSUFFICIENT_PERMISSIONS = "You don't have sufficient permissions!";
+    private final static String ERROR = "Error!";
 
     public RegisterOutput registerUser(RegisterInput registerInput) {
         RegisterOutput result = new RegisterOutput();
@@ -150,6 +153,51 @@ public class UserService {
         return output;
     }
 
+    public Output selfUpdate(UserDto userDto) {
+        Output output = new Output();
+
+        UserDetails userDetails = getCurUserDetails();
+        if (!userDetails.getUsername().equals(userDto.getUsername())) {
+            output.setStatusEnum(Output.StatusEnum.ERROR);
+            output.addMessage(Output.StatusEnum.ERROR, ERROR);
+            return output;
+        }
+
+        User.RoleEnum role = getCurUserRole();
+        if (firstRoleIsLowerThanSecond(role, userDto.getRole())) {
+            output.setStatusEnum(Output.StatusEnum.ERROR);
+            output.addMessage(Output.StatusEnum.ERROR, ERROR);
+            return output;
+        }
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+        String formerPassword = user.getPassword();
+
+        user = UserMapper.INSTANCE.userDtoToUser(userDto);
+        if (ObjectUtils.isEmpty(user.getPassword())) {
+            user.setPassword(formerPassword);
+        }
+
+        userRepository.saveAndFlush(user);
+
+        return output;
+    }
+
+    private boolean firstRoleIsLowerThanSecond(User.RoleEnum first, User.RoleEnum second) {
+        if (first.equals(User.RoleEnum.USER) &&
+                (second.equals(User.RoleEnum.MANAGER) ||
+                 second.equals(User.RoleEnum.ADMIN))) {
+            return true;
+        }
+
+        if (first.equals(User.RoleEnum.MANAGER) &&
+                second.equals(User.RoleEnum.ADMIN)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public Output deleteUser(Integer userId) {
         Output output = new Output();
         User user = userRepository.findById(userId)
@@ -186,4 +234,5 @@ public class UserService {
 
         return output;
     }
+
 }
