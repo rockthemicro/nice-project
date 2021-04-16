@@ -19,6 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static com.alexandru.timemanagement.security.SecurityConstants.API_USER;
 import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_CREATE_OR_UPDATE_NOTE_FOR_USER;
+import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_DELETE_NOTES_FOR_USER;
 import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_GET_NOTES_FOR_USER;
 
 @EnableWebSecurity
@@ -36,6 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(API_USER).permitAll()
                     .antMatchers(ENDPOINT_CREATE_OR_UPDATE_NOTE_FOR_USER).hasAuthority(User.RoleEnum.ADMIN.toString())
                     .antMatchers(ENDPOINT_GET_NOTES_FOR_USER).hasAuthority(User.RoleEnum.ADMIN.toString())
+                    .antMatchers(ENDPOINT_DELETE_NOTES_FOR_USER).hasAuthority(User.RoleEnum.ADMIN.toString())
                     .antMatchers("/api/test/ping-manager").hasAuthority(User.RoleEnum.MANAGER.toString())
                     .antMatchers("/api/test/ping-admin").hasAuthority(User.RoleEnum.ADMIN.toString())
                     .anyRequest().authenticated()

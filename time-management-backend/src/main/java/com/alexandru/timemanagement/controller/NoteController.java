@@ -1,5 +1,6 @@
 package com.alexandru.timemanagement.controller;
 
+import com.alexandru.timemanagement.dto.DeleteNotesInput;
 import com.alexandru.timemanagement.dto.GetNotesOutput;
 import com.alexandru.timemanagement.dto.NoteDto;
 import com.alexandru.timemanagement.dto.Output;
@@ -62,6 +63,31 @@ public class NoteController {
                                                           @RequestParam(required = false) Date to) {
 
         GetNotesOutput output = noteService.getNotesForUser(userId, from, to);
+        return ResponseEntity
+                .ok()
+                .body(output);
+    }
+
+
+    @RequestMapping(
+            value = "/deleteNotes",
+            method = RequestMethod.DELETE)
+    public ResponseEntity<Output> deleteNotes(@RequestBody DeleteNotesInput input) {
+
+        Output output = noteService.deleteNotes(input);
+        return ResponseEntity
+                .ok()
+                .body(output);
+    }
+
+
+    @RequestMapping(
+            value = "/deleteNotesForUser",
+            method = RequestMethod.DELETE)
+    public ResponseEntity<Output> deleteNotesForUser(@RequestParam Integer userId,
+                                                     @RequestBody DeleteNotesInput input) {
+
+        Output output = noteService.deleteNotesForUser(userId, input);
         return ResponseEntity
                 .ok()
                 .body(output);

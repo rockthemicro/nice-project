@@ -1,5 +1,6 @@
 package com.alexandru.timemanagement.service;
 
+import com.alexandru.timemanagement.dto.DeleteNotesInput;
 import com.alexandru.timemanagement.dto.GetNotesOutput;
 import com.alexandru.timemanagement.dto.NoteDto;
 import com.alexandru.timemanagement.dto.Output;
@@ -34,10 +35,7 @@ public class NoteService {
     public Output createOrUpdateNote(NoteDto noteDto) {
         Output output;
 
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        UserDetails userDetails = getUserDetails();
 
         if (!checkUserDetailsRole(userDetails, User.RoleEnum.USER)) {
             output = new Output();
@@ -71,11 +69,7 @@ public class NoteService {
     public GetNotesOutput getNotes(Date from, Date to) {
         GetNotesOutput output = new GetNotesOutput();
 
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-
+        UserDetails userDetails = getUserDetails();
         if (!checkUserDetailsRole(userDetails, User.RoleEnum.USER)) {
             output.setStatusEnum(Output.StatusEnum.ERROR);
             output.addMessage(Output.StatusEnum.ERROR, YOU_HAVE_NO_NOTES);
@@ -102,6 +96,40 @@ public class NoteService {
         } else {
             NoteDto[] notes = retrieveNotes(userId, from, to);
             output.setNotes(notes);
+        }
+
+        return output;
+    }
+
+
+    public Output deleteNotes(DeleteNotesInput input) {
+        Output output = new Output();
+
+        UserDetails userDetails = getUserDetails();
+        if (!checkUserDetailsRole(userDetails, User.RoleEnum.USER)) {
+            output.setStatusEnum(Output.StatusEnum.ERROR);
+            output.addMessage(Output.StatusEnum.ERROR, YOU_HAVE_NO_NOTES);
+        } else {
+            User user = userRepository.findByUsername(userDetails.getUsername())
+                    .orElseThrow();
+
+            noteRepository.deleteAllByIdsAndUserId(input.getNoteIds(), user.getId());
+        }
+
+        return output;
+    }
+
+    public Output deleteNotesForUser(Integer userId, DeleteNotesInput input) {
+        Output output = new Output();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow();
+
+        if (!user.getRole().equals(User.RoleEnum.USER)) {
+            output.setStatusEnum(Output.StatusEnum.ERROR);
+            output.addMessage(Output.StatusEnum.ERROR, YOU_CANT_CHANGE_NOTES);
+        } else {
+            noteRepository.deleteAllByIdsAndUserId(input.getNoteIds(), userId);
         }
 
         return output;
@@ -145,4 +173,10 @@ public class NoteService {
         return output;
     }
 
+    private UserDetails getUserDetails() {
+        return (UserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
 }
