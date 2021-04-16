@@ -1,9 +1,9 @@
 package com.alexandru.timemanagement.controller;
 
-import com.alexandru.timemanagement.dto.AuthInput;
-import com.alexandru.timemanagement.dto.AuthOutput;
-import com.alexandru.timemanagement.dto.Output;
-import com.alexandru.timemanagement.dto.RegisterInput;
+import com.alexandru.timemanagement.dto.input.AuthInput;
+import com.alexandru.timemanagement.dto.output.AuthOutput;
+import com.alexandru.timemanagement.dto.output.Output;
+import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

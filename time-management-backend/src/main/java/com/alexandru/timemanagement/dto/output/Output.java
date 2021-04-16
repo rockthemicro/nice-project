@@ -1,4 +1,4 @@
-package com.alexandru.timemanagement.dto;
+package com.alexandru.timemanagement.dto.output;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

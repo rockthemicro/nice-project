@@ -1,9 +1,9 @@
 package com.alexandru.timemanagement.service;
 
-import com.alexandru.timemanagement.dto.DeleteNotesInput;
-import com.alexandru.timemanagement.dto.GetNotesOutput;
+import com.alexandru.timemanagement.dto.input.DeleteNotesInput;
+import com.alexandru.timemanagement.dto.output.GetNotesOutput;
 import com.alexandru.timemanagement.dto.NoteDto;
-import com.alexandru.timemanagement.dto.Output;
+import com.alexandru.timemanagement.dto.output.Output;
 import com.alexandru.timemanagement.model.Note;
 import com.alexandru.timemanagement.model.User;
 import com.alexandru.timemanagement.model.mapper.NoteMapper;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.alexandru.timemanagement.utils.Commons.checkUserDetailsRole;
+import static com.alexandru.timemanagement.utils.Commons.getUserDetails;
 
 @Service
 @AllArgsConstructor
@@ -173,10 +174,4 @@ public class NoteService {
         return output;
     }
 
-    private UserDetails getUserDetails() {
-        return (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
 }

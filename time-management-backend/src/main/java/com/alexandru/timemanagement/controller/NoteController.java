@@ -1,9 +1,9 @@
 package com.alexandru.timemanagement.controller;
 
-import com.alexandru.timemanagement.dto.DeleteNotesInput;
-import com.alexandru.timemanagement.dto.GetNotesOutput;
+import com.alexandru.timemanagement.dto.input.DeleteNotesInput;
+import com.alexandru.timemanagement.dto.output.GetNotesOutput;
 import com.alexandru.timemanagement.dto.NoteDto;
-import com.alexandru.timemanagement.dto.Output;
+import com.alexandru.timemanagement.dto.output.Output;
 import com.alexandru.timemanagement.service.NoteService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

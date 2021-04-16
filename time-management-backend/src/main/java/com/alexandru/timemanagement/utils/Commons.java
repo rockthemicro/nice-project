@@ -2,6 +2,7 @@ package com.alexandru.timemanagement.utils;
 
 import com.alexandru.timemanagement.model.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class Commons {
@@ -13,5 +14,12 @@ public class Commons {
             }
         }
         return false;
+    }
+
+    public static UserDetails getUserDetails() {
+        return (UserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 }

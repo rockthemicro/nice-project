@@ -1,9 +1,9 @@
 package com.alexandru.timemanagement.service;
 
-import com.alexandru.timemanagement.dto.AuthInput;
-import com.alexandru.timemanagement.dto.AuthOutput;
-import com.alexandru.timemanagement.dto.Output;
-import com.alexandru.timemanagement.dto.RegisterInput;
+import com.alexandru.timemanagement.dto.input.AuthInput;
+import com.alexandru.timemanagement.dto.output.AuthOutput;
+import com.alexandru.timemanagement.dto.output.Output;
+import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.model.User;
 import com.alexandru.timemanagement.repository.UserRepository;
 import com.alexandru.timemanagement.security.JwtUtil;
