@@ -1,7 +1,9 @@
 package com.alexandru.timemanagement;
 
+import com.alexandru.timemanagement.dto.UserDto;
 import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.dto.output.AuthOutput;
+import com.alexandru.timemanagement.dto.output.Output;
 import com.alexandru.timemanagement.dto.output.RegisterOutput;
 import com.alexandru.timemanagement.model.User;
 import com.alexandru.timemanagement.model.mapper.UserMapper;
@@ -26,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -55,7 +58,7 @@ class TimeManagementApplicationTests {
 	private static boolean initiatedTokens = false;
 	/* 3 tokens; 1st is regular user, 2nd is manager, 3rd is admin */
 	private static final List<String> tokens = new ArrayList<>();
-	private final List<User> users = new ArrayList<>();
+	private final List<User> perTestUsers = new ArrayList<>();
 
 	@BeforeEach
 	@SneakyThrows
@@ -67,7 +70,7 @@ class TimeManagementApplicationTests {
 				User.RoleEnum.USER,
 				1);
 		user = userRepository.save(user);
-		users.add(user);
+		perTestUsers.add(user);
 
 		user = new User(
 				0,
@@ -76,7 +79,7 @@ class TimeManagementApplicationTests {
 				User.RoleEnum.MANAGER,
 				2);
 		user = userRepository.save(user);
-		users.add(user);
+		perTestUsers.add(user);
 
 		user = new User(
 				0,
@@ -85,7 +88,7 @@ class TimeManagementApplicationTests {
 				User.RoleEnum.ADMIN,
 				3);
 		user = userRepository.save(user);
-		users.add(user);
+		perTestUsers.add(user);
 
 
 		if (!initiatedTokens) {
@@ -96,10 +99,10 @@ class TimeManagementApplicationTests {
 
 	@AfterEach
 	public void tearDown() {
-		for (User user : users) {
+		for (User user : perTestUsers) {
 			userRepository.deleteById(user.getId());
 		}
-		users.clear();
+		perTestUsers.clear();
 	}
 
 	@Test
@@ -133,9 +136,8 @@ class TimeManagementApplicationTests {
 				.andReturn();
 
 		/* make sure the newly created user is cleaned up at the end */
-		String content = mvcResult.getResponse().getContentAsString();
-		RegisterOutput registerOutput = objectMapper.readValue(content, RegisterOutput.class);
-		users.add(UserMapper.INSTANCE.userDtoToUser(registerOutput.getUser()));
+		RegisterOutput registerOutput = extractContentAsTypeFromMvcResult(RegisterOutput.class, mvcResult);
+		perTestUsers.add(UserMapper.INSTANCE.userDtoToUser(registerOutput.getUser()));
 
 		String token = performAuthAndGetToken("foo", "bar");
 		mockMvc
@@ -153,8 +155,56 @@ class TimeManagementApplicationTests {
 				.perform(get("/api/user/manage/deleteUser")
 						.header(SecurityConstants.HEADER_STRING,
 								SecurityConstants.TOKEN_PREFIX + tokens.get(0))
-						.param("userId", String.valueOf(users.get(0).getId())))
+						.param("userId", String.valueOf(perTestUsers.get(0).getId())))
 				.andExpect(status().is(403));
+	}
+
+	@Test
+	public void testManagerCreatesManager() throws Exception {
+		UserDto userDto = new UserDto(
+				0,
+				"manager_user",
+				"pass",
+				User.RoleEnum.MANAGER,
+				123456);
+
+		mockMvc
+				.perform(post("/api/user/manage/createOrUpdate")
+						.contentType(APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userDto))
+						.header(SecurityConstants.HEADER_STRING,
+								SecurityConstants.TOKEN_PREFIX + tokens.get(1)))
+				.andExpect(status().isOk());
+
+		User user = userRepository.findByUsername("manager_user").orElseThrow();
+		assertThat(user.getPreferredWorkingHours()).isEqualTo(123456);
+		assertThat(user.getRole()).isEqualTo(User.RoleEnum.MANAGER);
+
+		/* cleanup */
+		perTestUsers.add(user);
+	}
+
+	@Test
+	public void testManagerCreatesAdmin() throws Exception {
+		UserDto userDto = new UserDto(
+				0,
+				"admin_user",
+				"pass",
+				User.RoleEnum.ADMIN,
+				null);
+
+		MvcResult mvcResult = mockMvc
+				.perform(post("/api/user/manage/createOrUpdate")
+						.contentType(APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userDto))
+						.header(SecurityConstants.HEADER_STRING,
+								SecurityConstants.TOKEN_PREFIX + tokens.get(1)))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		Output output = extractContentAsTypeFromMvcResult(Output.class, mvcResult);
+		assertThat(output.getStatusEnum().equals(Output.StatusEnum.ERROR));
+
 	}
 
 	private void initiateTokens() throws Exception {
@@ -176,9 +226,12 @@ class TimeManagementApplicationTests {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		String content = mvcResult.getResponse().getContentAsString();
-		AuthOutput authOutput = objectMapper.readValue(content, AuthOutput.class);
-
+		AuthOutput authOutput = extractContentAsTypeFromMvcResult(AuthOutput.class, mvcResult);
 		return authOutput.getToken();
+	}
+
+	private <T> T extractContentAsTypeFromMvcResult(Class<T> clazz, MvcResult mvcResult) throws Exception {
+		String content = mvcResult.getResponse().getContentAsString();
+		return objectMapper.readValue(content, clazz);
 	}
 }

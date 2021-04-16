@@ -105,14 +105,12 @@ public class UserService {
 
             /*
              * if the current user is a manager AND
-             * (the manager attempts to change an admin's profile OR
-             * the manager attempts to elevate another user up to admin),
+             * the manager attempts to change an admin's profile
              * then the manager does not have sufficient permissions to perform
              * these changes
              */
             if (curUserRole.equals(User.RoleEnum.MANAGER) &&
-                    (user.getRole().equals(User.RoleEnum.ADMIN) ||
-                     userDto.getRole().equals(User.RoleEnum.ADMIN))) {
+                    user.getRole().equals(User.RoleEnum.ADMIN)) {
 
                 output.setStatusEnum(Output.StatusEnum.ERROR);
                 output.addMessage(Output.StatusEnum.ERROR, INSUFFICIENT_PERMISSIONS);
@@ -120,6 +118,21 @@ public class UserService {
             }
 
             formerPassword = user.getPassword();
+
+        }
+
+        /*
+         * if the current user is a manager AND
+         * the manager attempts to create/update an admin's profile
+         * then the manager does not have sufficient permissions to perform
+         * these changes
+         */
+        if (curUserRole.equals(User.RoleEnum.MANAGER) &&
+                userDto.getRole().equals(User.RoleEnum.ADMIN)) {
+
+            output.setStatusEnum(Output.StatusEnum.ERROR);
+            output.addMessage(Output.StatusEnum.ERROR, INSUFFICIENT_PERMISSIONS);
+            return output;
         }
 
         user = UserMapper.INSTANCE.userDtoToUser(userDto);
