@@ -2,15 +2,14 @@ package com.alexandru.timemanagement.service;
 
 import com.alexandru.timemanagement.dto.UserDto;
 import com.alexandru.timemanagement.dto.input.AuthInput;
+import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.dto.output.AuthOutput;
 import com.alexandru.timemanagement.dto.output.GetUserOutput;
 import com.alexandru.timemanagement.dto.output.Output;
-import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.model.User;
 import com.alexandru.timemanagement.model.mapper.UserMapper;
 import com.alexandru.timemanagement.repository.UserRepository;
 import com.alexandru.timemanagement.security.JwtUtil;
-import com.alexandru.timemanagement.utils.Commons;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
