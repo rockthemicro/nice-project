@@ -16,10 +16,24 @@ public class Commons {
         return false;
     }
 
-    public static UserDetails getUserDetails() {
+    public static UserDetails getCurUserDetails() {
         return (UserDetails) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
+    }
+
+    public static User.RoleEnum getCurUserRole() {
+        for (GrantedAuthority ga : getCurUserDetails().getAuthorities()) {
+            String authority = ga.getAuthority();
+
+            for (User.RoleEnum role : User.RoleEnum.values()) {
+                if (role.toString().equals(authority)) {
+                    return role;
+                }
+            }
+        }
+
+        return User.RoleEnum.USER;
     }
 }

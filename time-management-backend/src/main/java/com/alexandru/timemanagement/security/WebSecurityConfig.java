@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static com.alexandru.timemanagement.security.SecurityConstants.API_USER;
+import static com.alexandru.timemanagement.security.SecurityConstants.API_USER_MANAGE;
 import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_CREATE_OR_UPDATE_NOTE_FOR_USER;
 import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_DELETE_NOTES_FOR_USER;
 import static com.alexandru.timemanagement.security.SecurityConstants.ENDPOINT_GET_NOTES_FOR_USER;
@@ -34,6 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
+                    .antMatchers(API_USER_MANAGE).hasAnyAuthority(User.RoleEnum.ADMIN.toString(),
+                                                                  User.RoleEnum.MANAGER.toString())
                     .antMatchers(API_USER).permitAll()
                     .antMatchers(ENDPOINT_CREATE_OR_UPDATE_NOTE_FOR_USER).hasAuthority(User.RoleEnum.ADMIN.toString())
                     .antMatchers(ENDPOINT_GET_NOTES_FOR_USER).hasAuthority(User.RoleEnum.ADMIN.toString())

@@ -10,7 +10,6 @@ import com.alexandru.timemanagement.model.mapper.NoteMapper;
 import com.alexandru.timemanagement.repository.NoteRepository;
 import com.alexandru.timemanagement.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.alexandru.timemanagement.utils.Commons.checkUserDetailsRole;
-import static com.alexandru.timemanagement.utils.Commons.getUserDetails;
+import static com.alexandru.timemanagement.utils.Commons.getCurUserDetails;
 
 @Service
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class NoteService {
     public Output createOrUpdateNote(NoteDto noteDto) {
         Output output;
 
-        UserDetails userDetails = getUserDetails();
+        UserDetails userDetails = getCurUserDetails();
 
         if (!checkUserDetailsRole(userDetails, User.RoleEnum.USER)) {
             output = new Output();
@@ -70,7 +69,7 @@ public class NoteService {
     public GetNotesOutput getNotes(Date from, Date to) {
         GetNotesOutput output = new GetNotesOutput();
 
-        UserDetails userDetails = getUserDetails();
+        UserDetails userDetails = getCurUserDetails();
         if (!checkUserDetailsRole(userDetails, User.RoleEnum.USER)) {
             output.setStatusEnum(Output.StatusEnum.ERROR);
             output.addMessage(Output.StatusEnum.ERROR, YOU_HAVE_NO_NOTES);
@@ -106,7 +105,7 @@ public class NoteService {
     public Output deleteNotes(DeleteNotesInput input) {
         Output output = new Output();
 
-        UserDetails userDetails = getUserDetails();
+        UserDetails userDetails = getCurUserDetails();
         if (!checkUserDetailsRole(userDetails, User.RoleEnum.USER)) {
             output.setStatusEnum(Output.StatusEnum.ERROR);
             output.addMessage(Output.StatusEnum.ERROR, YOU_HAVE_NO_NOTES);
