@@ -1,5 +1,6 @@
 package com.alexandru.timemanagement.dto.output;
 
+import com.alexandru.timemanagement.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,4 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthOutput extends Output {
     private String token;
+    private UserDto user;
 }

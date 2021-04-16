@@ -3,6 +3,7 @@ package com.alexandru.timemanagement;
 import com.alexandru.timemanagement.dto.UserDto;
 import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.dto.output.AuthOutput;
+import com.alexandru.timemanagement.dto.output.GetUserOutput;
 import com.alexandru.timemanagement.dto.output.Output;
 import com.alexandru.timemanagement.dto.output.RegisterOutput;
 import com.alexandru.timemanagement.model.User;
@@ -205,6 +206,27 @@ class TimeManagementApplicationTests {
 		Output output = extractContentAsTypeFromMvcResult(Output.class, mvcResult);
 		assertThat(output.getStatusEnum().equals(Output.StatusEnum.ERROR));
 
+	}
+
+	@Test
+	public void testGetUser() throws Exception {
+		User regularUser = perTestUsers.get(0);
+		String adminToken = tokens.get(2);
+
+		MvcResult mvcResult = mockMvc
+				.perform(get("/api/user/manage/getUser")
+						.param("username", regularUser.getUsername())
+						.header(SecurityConstants.HEADER_STRING,
+								SecurityConstants.TOKEN_PREFIX + adminToken))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		UserDto regularUserDto = extractContentAsTypeFromMvcResult(GetUserOutput.class, mvcResult).getUser();
+		assertThat(regularUserDto.getId()).isEqualTo(regularUser.getId());
+		assertThat(regularUserDto.getPreferredWorkingHours())
+				.isEqualTo(regularUser.getPreferredWorkingHours());
+		assertThat(regularUserDto.getUsername()).isEqualTo(regularUser.getUsername());
+		assertThat(regularUserDto.getRole()).isEqualTo(regularUser.getRole());
 	}
 
 	private void initiateTokens() throws Exception {

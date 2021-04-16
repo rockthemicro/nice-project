@@ -90,7 +90,11 @@ public class UserService {
 
         final String jwt = jwtTokenUtil.generateToken(userDetails);
 
-        return new AuthOutput(jwt);
+        User user = userRepository.findByUsername(authInput.getUsername()).orElseThrow();
+        UserDto userDto = UserMapper.INSTANCE.userToUserDto(user);
+        userDto.setPassword(null);
+
+        return new AuthOutput(jwt, userDto);
     }
 
     public Output createOrUpdateUser(UserDto userDto) {
