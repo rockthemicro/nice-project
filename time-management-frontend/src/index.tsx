@@ -3,10 +3,47 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {BrowserRouter} from "react-router-dom";
+import {Provider} from 'react-redux';
+import configureStore from "./configureStore";
+
+enum Role {
+    USER,
+    MANAGER,
+    ADMIN
+}
+
+interface User {
+     id: number;
+     username: string;
+     password: string;
+     role: Role;
+     preferredWorkingHours: number;
+}
+
+interface ApplicationState {
+    token: string;
+    user: User;
+}
+
+const initialState: ApplicationState = {
+    token: "",
+    user: {
+        id: 0,
+        username: "",
+        password: "",
+        preferredWorkingHours: 0,
+        role: Role.USER,
+    }
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+      <BrowserRouter>
+          <Provider store={configureStore(initialState)}>
+              <App />
+          </Provider>
+      </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
