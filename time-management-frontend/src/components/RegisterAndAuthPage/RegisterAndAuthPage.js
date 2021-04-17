@@ -37,19 +37,20 @@ function RegisterAndAuthPage(props) {
                 password: values.password
             })
             .then((response) => {
-                if (responseIsSuccess(response)) {
-                    props.loginAction(response.data);
-
-                    const user = response.data.user;
-                    if (user.role === RoleEnum.USER) {
-                        props.history.push("/notes");
-                    } else {
-                        props.history.push("/users");
-                    }
-
-                } else {
+                if (!responseIsSuccess(response)) {
                     alertResponseMessages(response);
+                    return;
                 }
+
+                props.loginAction(response.data);
+
+                const user = response.data.user;
+                if (user.role === RoleEnum.USER) {
+                    props.history.push("/notes");
+                } else {
+                    props.history.push("/users");
+                }
+
             }, (error) => {
                 alert(error);
             });
@@ -67,12 +68,13 @@ function RegisterAndAuthPage(props) {
                 password: values.password
             })
             .then((response) => {
-                if (responseIsSuccess(response)) {
-                    form.resetFields();
-                    setIsRegister(false);
-                } else {
+                if (!responseIsSuccess(response)) {
                     alertResponseMessages(response);
+                    return;
                 }
+
+                form.resetFields();
+                setIsRegister(false);
             }, (error) => {
                 alert(error);
             });

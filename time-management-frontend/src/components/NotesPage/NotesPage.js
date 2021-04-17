@@ -5,6 +5,7 @@ import {compose} from "redux";
 import {Table} from "antd";
 import RoleEnum from "../../RoleEnum";
 import axiosInstance from "../../index";
+import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
 
 const mapStateToProps = (state) => ({
     loginReducer: state.loginReducer
@@ -33,6 +34,11 @@ function NotesPage(props) {
             axiosInstance
                 .get("/note/getNotes")
                 .then((response) => {
+                    if (!responseIsSuccess(response)) {
+                        alertResponseMessages(response);
+                        return;
+                    }
+
                     const indexedNotes = response.data.notes.map((note, index) => {
                         return {
                             ...note,
