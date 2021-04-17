@@ -36,24 +36,23 @@ function RegisterAndAuthPage(props) {
                 username: values.username,
                 password: values.password
             })
-            .then(
-                (response) => {
-                    if (responseIsSuccess(response)) {
-                        props.loginAction(response.data);
+            .then((response) => {
+                if (responseIsSuccess(response)) {
+                    props.loginAction(response.data);
 
-                        const user = response.data.user;
-                        if (user.role === RoleEnum.USER) {
-                            props.history.push("/notes");
-                        } else {
-                            props.history.push("/users");
-                        }
-
+                    const user = response.data.user;
+                    if (user.role === RoleEnum.USER) {
+                        props.history.push("/notes");
                     } else {
-                        alertResponseMessages(response);
+                        props.history.push("/users");
                     }
-                }, (error) => {
-                    alert(error);
-                });
+
+                } else {
+                    alertResponseMessages(response);
+                }
+            }, (error) => {
+                alert(error);
+            });
     }
 
     const handleRegister = (values) => {
@@ -67,17 +66,16 @@ function RegisterAndAuthPage(props) {
                 username: values.username,
                 password: values.password
             })
-            .then(
-                (response) => {
-                    if (responseIsSuccess(response)) {
-                        form.resetFields();
-                        setIsRegister(false);
-                    } else {
-                        alertResponseMessages(response);
-                    }
-                }, (error) => {
-                    alert(error);
-                });
+            .then((response) => {
+                if (responseIsSuccess(response)) {
+                    form.resetFields();
+                    setIsRegister(false);
+                } else {
+                    alertResponseMessages(response);
+                }
+            }, (error) => {
+                alert(error);
+            });
     }
 
     return (

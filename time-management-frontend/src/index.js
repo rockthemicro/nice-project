@@ -30,8 +30,8 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(req => {
-    if (store.getState().token) {
-        req.headers.authorization = 'Bearer ' + store.getState().token;
+    if (store.getState().loginReducer.userState.token) {
+        req.headers.authorization = 'Bearer ' + store.getState().loginReducer.userState.token;
     }
 
     return req;
