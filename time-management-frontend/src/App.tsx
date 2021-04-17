@@ -1,10 +1,10 @@
 import React from 'react';
 import './App.css';
-import {Switch, Route} from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 import RegisterAndAuthPage from "./components/RegisterAndAuthPage";
 
 function App() {
-  return (
+    return (
     <div className="App">
         <Switch>
             <Route path="/">

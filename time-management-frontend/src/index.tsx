@@ -8,27 +8,9 @@ import {Provider} from 'react-redux';
 import configureStore from "./configureStore";
 import axios from "axios";
 import {Store} from "redux";
+import {UserState, Role} from "./Types";
 
-enum Role {
-    USER,
-    MANAGER,
-    ADMIN
-}
-
-interface User {
-     id: number;
-     username: string;
-     password: string;
-     role: Role;
-     preferredWorkingHours: number;
-}
-
-interface ApplicationState {
-    token: string;
-    user: User;
-}
-
-const initialState: ApplicationState = {
+const initialUserState: UserState = {
     token: "",
     user: {
         id: 0,
@@ -39,15 +21,17 @@ const initialState: ApplicationState = {
     }
 }
 
-const store: Store = configureStore(initialState);
+const store: Store = configureStore({
+    loginReducer: {
+        userState: initialUserState
+    }
+});
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:8080/api'
 });
 
 axiosInstance.interceptors.request.use(req => {
-    // `req` is the Axios request config, so you can modify
-    // the `headers`.
     if (store.getState().token) {
         req.headers.authorization = 'Bearer ' + store.getState().token;
     }

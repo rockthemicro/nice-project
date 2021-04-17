@@ -1,18 +1,23 @@
-import React, {useState} from "react";
+import React, {ReactType, useState} from "react";
 import {connect, MapDispatchToProps, MapStateToProps} from "react-redux";
 
 import {Button, Form, FormInstance, Input, Switch} from 'antd';
 import {LockOutlined, UserOutlined} from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import axiosInstance from "../../index";
+import loginAction from "../../actions/loginAction";
+import {UserState} from "../../Types";
+import {compose} from "redux";
+import {RouteComponentProps, withRouter} from "react-router-dom";
 
-const mapStateToProps:MapStateToProps<any, any> = state => ({
+const mapStateToProps:MapStateToProps<any, any> = (state: any) => ({
 });
 
-const mapDispatchToProps:MapDispatchToProps<any, any> = (_: any) => ({
+const mapDispatchToProps:MapDispatchToProps<any, any> = (dispatch: any) => ({
+    loginAction: (userState: UserState) => dispatch(loginAction(userState))
 });
 
-function RegisterAndAuthPage() {
+function RegisterAndAuthPage(props: any) {
     const [isRegister, setIsRegister] = useState(false);
 
     const onFinish = (values: any) => {
@@ -24,9 +29,10 @@ function RegisterAndAuthPage() {
                 })
                 .then(
                     (response: any) => {
-                        console.log(response);
+                        loginAction(response.data);
+                        props.history.push("/notes")
                     }, (error) => {
-
+                        alert(error);
                     });
         } else {
         }
@@ -110,4 +116,7 @@ function RegisterAndAuthPage() {
         </Form>);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterAndAuthPage);
+export default compose(
+    withRouter,
+    connect(mapStateToProps, mapDispatchToProps))
+(RegisterAndAuthPage);
