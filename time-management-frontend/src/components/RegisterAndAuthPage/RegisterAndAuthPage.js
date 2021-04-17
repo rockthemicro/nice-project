@@ -1,26 +1,25 @@
-import React, {ReactType, useState} from "react";
-import {connect, MapDispatchToProps, MapStateToProps} from "react-redux";
+import React, {useState} from "react";
+import {connect} from "react-redux";
 
-import {Button, Form, FormInstance, Input, Switch} from 'antd';
+import {Button, Form, Input, Switch} from 'antd';
 import {LockOutlined, UserOutlined} from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import axiosInstance from "../../index";
 import loginAction from "../../actions/loginAction";
-import {UserState} from "../../Types";
 import {compose} from "redux";
-import {RouteComponentProps, withRouter} from "react-router-dom";
+import {withRouter} from "react-router-dom";
 
-const mapStateToProps:MapStateToProps<any, any> = (state: any) => ({
+const mapStateToProps = (state) => ({
 });
 
-const mapDispatchToProps:MapDispatchToProps<any, any> = (dispatch: any) => ({
-    loginAction: (userState: UserState) => dispatch(loginAction(userState))
+const mapDispatchToProps = (dispatch) => ({
+    loginAction: (userState) => dispatch(loginAction(userState))
 });
 
-function RegisterAndAuthPage(props: any) {
+function RegisterAndAuthPage(props) {
     const [isRegister, setIsRegister] = useState(false);
 
-    const onFinish = (values: any) => {
+    const onFinish = (values) => {
         if (!isRegister) {
             axiosInstance
                 .post("/user/auth", {
@@ -28,7 +27,8 @@ function RegisterAndAuthPage(props: any) {
                     password: values.password
                 })
                 .then(
-                    (response: any) => {
+                    (response) => {
+                        debugger;
                         loginAction(response.data);
                         props.history.push("/notes")
                     }, (error) => {
@@ -38,11 +38,8 @@ function RegisterAndAuthPage(props: any) {
         }
     }
 
-    const [form]: FormInstance[] = Form.useForm();
-
     return (
         <Form
-            form={form}
             name="normal_login"
             initialValues={{
                 remember: true,

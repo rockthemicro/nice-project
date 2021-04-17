@@ -1,6 +1,6 @@
-import {UserState} from "../Types";
 
-const loginAction = (userState: UserState) => (dispatch: any) => {
+const loginAction = (userState) => (dispatch) => {
+    debugger;
     dispatch({
         type: 'LOG_IN',
         payload: userState
