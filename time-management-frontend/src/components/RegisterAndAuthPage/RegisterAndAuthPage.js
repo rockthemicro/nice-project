@@ -8,6 +8,7 @@ import axiosInstance from "../../index";
 import loginAction from "../../actions/loginAction";
 import {compose} from "redux";
 import {withRouter} from "react-router-dom";
+import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
 
 const mapStateToProps = (state) => ({
 });
@@ -18,27 +19,62 @@ const mapDispatchToProps = (dispatch) => ({
 
 function RegisterAndAuthPage(props) {
     const [isRegister, setIsRegister] = useState(false);
+    const [form] = Form.useForm();
 
     const onFinish = (values) => {
         if (!isRegister) {
-            axiosInstance
-                .post("/user/auth", {
-                    username: values.username,
-                    password: values.password
-                })
-                .then(
-                    (response) => {
-                        props.loginAction(response.data);
-                        props.history.push("/notes")
-                    }, (error) => {
-                        alert(error);
-                    });
+            handleLogin(values);
         } else {
+            handleRegister(values);
         }
+    }
+
+    const handleLogin = (values) => {
+        axiosInstance
+            .post("/user/auth", {
+                username: values.username,
+                password: values.password
+            })
+            .then(
+                (response) => {
+                    if (responseIsSuccess(response)) {
+                        props.loginAction(response.data);
+                        props.history.push("/notes");
+                    } else {
+                        alertResponseMessages(response);
+                    }
+                }, (error) => {
+                    alert(error);
+                });
+    }
+
+    const handleRegister = (values) => {
+        if (values.repeat_password !== values.password) {
+            alert("The passwords don't match!");
+            return;
+        }
+
+        axiosInstance
+            .post("/user/register", {
+                username: values.username,
+                password: values.password
+            })
+            .then(
+                (response) => {
+                    if (responseIsSuccess(response)) {
+                        form.resetFields();
+                        setIsRegister(false);
+                    } else {
+                        alertResponseMessages(response);
+                    }
+                }, (error) => {
+                    alert(error);
+                });
     }
 
     return (
         <Form
+            form={form}
             name="normal_login"
             initialValues={{
                 remember: true,
@@ -95,6 +131,7 @@ function RegisterAndAuthPage(props) {
             <div>
                 {'Toggle Register '}
                 <Switch defaultChecked={isRegister}
+                        checked={isRegister}
                         onChange={(value) => setIsRegister(value)}/>
             </div>
 
