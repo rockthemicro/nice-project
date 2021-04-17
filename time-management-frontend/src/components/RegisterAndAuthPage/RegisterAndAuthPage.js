@@ -28,8 +28,7 @@ function RegisterAndAuthPage(props) {
                 })
                 .then(
                     (response) => {
-                        debugger;
-                        loginAction(response.data);
+                        props.loginAction(response.data);
                         props.history.push("/notes")
                     }, (error) => {
                         alert(error);

@@ -11,17 +11,16 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
 });
 
-const f = (value) => () => {
-    debugger;
-    alert(value);
-}
-
 function NotesPage(props) {
 
     return (
-        <div onClick={f(props.loginReducer.userState.token)}>
+        <div>
             button
+            <div>
+                {props.loginReducer.userState.token}
+            </div>
         </div>
+
     );
 }
 

@@ -1,9 +1,11 @@
 
 export default (state = {}, action) => {
-    debugger;
     if (action.type === "LOG_IN") {
         return {
-            userState: state
+            userState: {
+                token: action.payload.token,
+                user: action.payload.user
+            }
         }
     }
 
