@@ -28,6 +28,7 @@ function RegisterAndAuthPage() {
                     }, (error) => {
 
                     });
+        } else {
         }
     }
 
