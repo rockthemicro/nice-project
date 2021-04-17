@@ -4,6 +4,7 @@ import {connect, MapDispatchToProps, MapStateToProps} from "react-redux";
 import {Button, Form, FormInstance, Input, Switch} from 'antd';
 import {LockOutlined, UserOutlined} from '@ant-design/icons';
 import 'antd/dist/antd.css';
+import axiosInstance from "../../index";
 
 const mapStateToProps:MapStateToProps<any, any> = state => ({
 });
@@ -15,7 +16,19 @@ function RegisterAndAuthPage() {
     const [isRegister, setIsRegister] = useState(false);
 
     const onFinish = (values: any) => {
-        alert(isRegister ? "register" : "login");
+        if (!isRegister) {
+            axiosInstance
+                .post("/user/auth", {
+                    username: values.username,
+                    password: values.password
+                })
+                .then(
+                    (response: any) => {
+                        console.log(response);
+                    }, (error) => {
+
+                    });
+        }
     }
 
     const [form]: FormInstance[] = Form.useForm();

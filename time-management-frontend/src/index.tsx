@@ -6,6 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
 import {Provider} from 'react-redux';
 import configureStore from "./configureStore";
+import axios from "axios";
+import {Store} from "redux";
 
 enum Role {
     USER,
@@ -37,10 +39,26 @@ const initialState: ApplicationState = {
     }
 }
 
+const store: Store = configureStore(initialState);
+
+const axiosInstance = axios.create({
+    baseURL: 'http://localhost:8080/api'
+});
+
+axiosInstance.interceptors.request.use(req => {
+    // `req` is the Axios request config, so you can modify
+    // the `headers`.
+    if (store.getState().token) {
+        req.headers.authorization = 'Bearer ' + store.getState().token;
+    }
+
+    return req;
+});
+
 ReactDOM.render(
   <React.StrictMode>
       <BrowserRouter>
-          <Provider store={configureStore(initialState)}>
+          <Provider store={store}>
               <App />
           </Provider>
       </BrowserRouter>
@@ -52,3 +70,5 @@ ReactDOM.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+export default axiosInstance;
