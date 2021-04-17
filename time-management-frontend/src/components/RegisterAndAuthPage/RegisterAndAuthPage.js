@@ -9,6 +9,7 @@ import loginAction from "../../actions/loginAction";
 import {compose} from "redux";
 import {withRouter} from "react-router-dom";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
+import RoleEnum from "../../RoleEnum";
 
 const mapStateToProps = (state) => ({
 });
@@ -39,7 +40,14 @@ function RegisterAndAuthPage(props) {
                 (response) => {
                     if (responseIsSuccess(response)) {
                         props.loginAction(response.data);
-                        props.history.push("/notes");
+
+                        const user = response.data.user;
+                        if (user.role === RoleEnum.USER) {
+                            props.history.push("/notes");
+                        } else {
+                            props.history.push("/users");
+                        }
+
                     } else {
                         alertResponseMessages(response);
                     }

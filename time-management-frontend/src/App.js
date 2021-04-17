@@ -3,6 +3,7 @@ import './App.css';
 import {Route, Switch} from "react-router-dom";
 import RegisterAndAuthPage from "./components/RegisterAndAuthPage/index";
 import NotesPage from "./components/NotesPage/NotesPage";
+import UsersPage from "./components/UsersPage/UsersPage";
 
 function App() {
     return (
@@ -11,6 +12,10 @@ function App() {
 
             <Route path="/notes">
                 <NotesPage/>
+            </Route>
+
+            <Route path="/users">
+                <UsersPage/>
             </Route>
 
             <Route path="/">

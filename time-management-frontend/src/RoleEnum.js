@@ -1,7 +1,7 @@
 const RoleEnum = {
-    USER: 0,
-    MANAGER: 1,
-    ADMIN: 2
+    USER: "USER",
+    MANAGER: "MANAGER",
+    ADMIN: "ADMIN"
 }
 
 export default RoleEnum;
