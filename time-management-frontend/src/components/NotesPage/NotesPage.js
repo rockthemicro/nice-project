@@ -49,6 +49,9 @@ function NotesPage(props) {
     const [data, setData] = useState([]);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [targetUserId, setTargetUserId] = useState(0);
+    const [enteredTargetUserId, setEnteredTargetUserId] = useState(0);
+
 
     const getNoteActions = (note) => {
         return (
@@ -131,30 +134,68 @@ function NotesPage(props) {
         fileDownload(exportNotes(data), "notes.html");
     }
 
+    const getEditNotesUserIdSuffix = () => {
+        let suffix = "";
+
+        if (props.loginReducer.userState.user.role === RoleEnum.ADMIN) {
+            suffix += "/user/" + enteredTargetUserId;
+        }
+
+        return suffix;
+    }
+
     const handleAddNote = () => {
-        props.history.push("/notes/editNote/0");
+        props.history.push("/notes/editNote/0" + getEditNotesUserIdSuffix());
     }
 
     const handleEditNote = (note) => () => {
-        props.history.push("/notes/editNote/" + note.id, {
+        props.history.push("/notes/editNote/" + note.id + getEditNotesUserIdSuffix(), {
             note: note
         });
     }
 
-
     const handleDeleteNote = (note) => () => {
+        let url;
+        const params = {};
+        const deleteData = { noteIds: [note.id] };
+        let weAreAdmin;
 
+        if (props.loginReducer.userState.user.role === RoleEnum.ADMIN) {
+            url = "/note/deleteNotesForUser";
+            params.userId = enteredTargetUserId;
+            weAreAdmin = true;
+        } else {
+            url = "/note/deleteNotes";
+            weAreAdmin = false;
+        }
+
+        axiosInstance
+            .delete(url, {
+                params: params,
+                data: deleteData
+            })
+            .then((response) => {
+                if (!responseIsSuccess(response)) {
+                    alertResponseMessages(response);
+                    return;
+                }
+                performGetNotes(weAreAdmin);
+            }, (error) => {
+                alert(error);
+            })
     }
-
-    const [targetUserId, setTargetUserId] = useState(0);
 
     const onChangeTargetUserId = (value) => {
         setTargetUserId(value);
     }
 
     const onEnterTargetUserId = () => {
-        performGetNotes(true);
+        setEnteredTargetUserId(targetUserId);
     }
+
+    useEffect(() => {
+        performGetNotes(true);
+    }, [enteredTargetUserId]);
 
     return (
         <div>

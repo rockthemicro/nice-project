@@ -115,6 +115,7 @@ public class NoteService {
                     .orElseThrow();
 
             noteRepository.deleteAllByIdsAndUserId(input.getNoteIds(), user.getId());
+            noteRepository.flush();
         }
 
         return output;
@@ -131,6 +132,7 @@ public class NoteService {
             output.addMessage(Output.StatusEnum.ERROR, YOU_CANT_CHANGE_NOTES);
         } else {
             noteRepository.deleteAllByIdsAndUserId(input.getNoteIds(), userId);
+            noteRepository.flush();
         }
 
         return output;
