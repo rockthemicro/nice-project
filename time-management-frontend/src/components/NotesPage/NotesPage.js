@@ -6,6 +6,8 @@ import {Space, DatePicker, Table, Button} from "antd";
 import RoleEnum from "../../RoleEnum";
 import axiosInstance from "../../index";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
+import exportNotes from "./exportNotes";
+import fileDownload from 'js-file-download'
 
 const mapStateToProps = (state) => ({
     loginReducer: state.loginReducer
@@ -95,6 +97,10 @@ function NotesPage(props) {
         }
     }
 
+    const handleExport = () => {
+        fileDownload(exportNotes(data), "notes.html");
+    }
+
     return (
         <div>
             <Space direction="vertical">
@@ -102,7 +108,7 @@ function NotesPage(props) {
                 <Space>
                     <DatePicker placeholder="Start Date" onChange={onChangeStartDate}/>
                     <DatePicker placeholder="End Date" onChange={onChangeEndDate}/>
-                    <Button type="primary">
+                    <Button type="primary" onClick={handleExport}>
                         Export
                     </Button>
                 </Space>
