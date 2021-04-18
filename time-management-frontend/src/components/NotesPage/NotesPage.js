@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import {compose} from "redux";
-import {Table} from "antd";
+import {Space, DatePicker, Table} from "antd";
 import RoleEnum from "../../RoleEnum";
 import axiosInstance from "../../index";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
@@ -28,11 +28,23 @@ function NotesPage(props) {
         }
     ];
     const [data, setData] = useState([]);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     useEffect(() => {
         if (props.loginReducer.userState.user.role === RoleEnum.USER) {
+            const params = {};
+
+            if (startDate != null) {
+                params["from"] = startDate;
+            }
+
+            if (endDate != null) {
+                params["to"] = endDate;
+            }
+
             axiosInstance
-                .get("/note/getNotes")
+                .get("/note/getNotes", { params: params })
                 .then((response) => {
                     if (!responseIsSuccess(response)) {
                         alertResponseMessages(response);
@@ -50,17 +62,40 @@ function NotesPage(props) {
                     alert(error);
                 });
         }
-    }, []);
+    }, [startDate, endDate]);
+
+    const onChangeStartDate = (values) => {
+        if (values == null) {
+            setStartDate(null);
+        } else {
+            setStartDate(values.format("YYYY-MM-DD"));
+        }
+    }
+
+    const onChangeEndDate = (values) => {
+        if (values == null) {
+            setEndDate(null);
+        } else {
+            setEndDate(values.format("YYYY-MM-DD"));
+        }
+    }
 
     return (
         <div>
-            <Table
-                columns={columns}
-                dataSource={data}
-                size="middle"
-                pagination={false}
-                scroll={{y: '30vw', scrollToFirstRowOnChange: true}}
-            />
+            <Space direction="vertical">
+                <br/>
+                <Space>
+                    <DatePicker placeholder="Start Date" onChange={onChangeStartDate}/>
+                    <DatePicker placeholder="End Date" onChange={onChangeEndDate}/>
+                </Space>
+                <Table
+                    columns={columns}
+                    dataSource={data}
+                    size="middle"
+                    pagination={false}
+                    scroll={{y: '30vw', scrollToFirstRowOnChange: true}}
+                />
+            </Space>
 
         </div>
 
