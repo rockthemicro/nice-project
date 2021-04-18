@@ -101,6 +101,10 @@ function NotesPage(props) {
         fileDownload(exportNotes(data), "notes.html");
     }
 
+    const handleAddNote = () => {
+        props.history.push("/notes/editNote");
+    }
+
     return (
         <div>
             <Space direction="vertical">
@@ -110,6 +114,9 @@ function NotesPage(props) {
                     <DatePicker placeholder="End Date" onChange={onChangeEndDate}/>
                     <Button type="primary" onClick={handleExport}>
                         Export
+                    </Button>
+                    <Button onClick={handleAddNote}>
+                        Add Note
                     </Button>
                 </Space>
                 <Table

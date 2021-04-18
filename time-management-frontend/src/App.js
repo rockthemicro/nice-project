@@ -4,12 +4,16 @@ import {Route, Switch} from "react-router-dom";
 import RegisterAndAuthPage from "./components/RegisterAndAuthPage/index";
 import NotesPage from "./components/NotesPage/NotesPage";
 import UsersPage from "./components/UsersPage/UsersPage";
+import EditNote from "./components/EditNote/EditNote";
 
 function App() {
     return (
     <div className="App">
         <Switch>
 
+            <Route path="/notes/editNote">
+                <EditNote/>
+            </Route>
             <Route path="/notes">
                 <NotesPage/>
             </Route>
