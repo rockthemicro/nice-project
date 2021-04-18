@@ -3,6 +3,8 @@ import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import React from "react";
 import {DatePicker, Button, Form, Input, InputNumber, Space} from "antd";
+import axiosInstance from "../../index";
+import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
 
 const mapStateToProps = (state) => ({
 });
@@ -18,7 +20,23 @@ function EditNote(props) {
             form.getFieldInstance("date").focus();
             return;
         }
-        props.history.push("/notes");
+
+        axiosInstance
+            .post("/note/createOrUpdate", {
+                content: values.content,
+                hours: values.hours,
+                date: values.date.format("YYYY-MM-DD")
+            })
+            .then((response) => {
+                if (!responseIsSuccess(response)) {
+                    alertResponseMessages(response);
+                    return;
+                }
+                props.history.push("/notes");
+
+            }, (error) => {
+                alert(error);
+            })
     };
 
     const onCancel = () => {
