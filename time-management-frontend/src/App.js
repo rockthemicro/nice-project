@@ -11,6 +11,10 @@ function App() {
     <div className="App">
         <Switch>
 
+
+            <Route path="/notes/editNote/:noteId/user/:userId">
+                <EditNote/>
+            </Route>
             <Route path="/notes/editNote/:noteId">
                 <EditNote/>
             </Route>

@@ -27,8 +27,8 @@ public class NoteService {
     private final UserRepository userRepository;
     private final NoteRepository noteRepository;
 
-    private static final String YOU_HAVE_NO_NOTES = "You are a privileged user and"
-            + " you possess no Notes of your own.";
+    private static final String YOU_HAVE_NO_NOTES = "This is a privileged user and"
+            + " possesses no Notes of its own.";
     private static final String YOU_CANT_CHANGE_NOTES = "You cannot change Notes for"
             + " privileged users.";
     private static final String ERROR_UPDATE_NOTE = "Error updating this note.";
@@ -93,7 +93,7 @@ public class NoteService {
 
         if (!user.getRole().equals(User.RoleEnum.USER)) {
             output.setStatusEnum(Output.StatusEnum.ERROR);
-            output.addMessage(Output.StatusEnum.ERROR, YOU_CANT_CHANGE_NOTES);
+            output.addMessage(Output.StatusEnum.ERROR, YOU_HAVE_NO_NOTES);
         } else {
             NoteDto[] notes = retrieveNotes(userId, from, to, user.getPreferredWorkingHours());
             output.setNotes(notes);

@@ -22,13 +22,22 @@ function EditNote(props) {
             return;
         }
 
+        const params = {};
+        let url;
+        if (props.match.params.userId) {
+            params.userId = props.match.params.userId;
+            url = "/note/createOrUpdateForUser";
+        } else {
+            url = "/note/createOrUpdate";
+        }
+
         axiosInstance
-            .post("/note/createOrUpdate", {
+            .post(url, {
                 id: props.match.params.noteId,
                 content: values.content,
                 hours: values.hours,
                 date: values.date.format("YYYY-MM-DD")
-            })
+            }, { params: params })
             .then((response) => {
                 if (!responseIsSuccess(response)) {
                     alertResponseMessages(response);
@@ -50,7 +59,6 @@ function EditNote(props) {
 
         const note = props.location.state.note;
 
-        // form.getFieldInstance("content").setValue(note.content);
         const date = moment(note.date, "YYYY-MM-DD");
         form.setFieldsValue({
             content: note.content,

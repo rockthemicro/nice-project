@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import {compose} from "redux";
-import {Space, DatePicker, Table, Button} from "antd";
+import {Button, DatePicker, InputNumber, Space, Table} from "antd";
 import RoleEnum from "../../RoleEnum";
 import axiosInstance from "../../index";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
@@ -21,7 +21,6 @@ function NotesPage(props) {
         const color = row.flagged ? "red" : "green";
 
         const obj = {
-            // children: row.flagged ? text.fontcolor("red") : text.fontcolor("green"),
             children: <p style={{color: color}}> {text} </p>,
             props: {},
         };
@@ -62,37 +61,55 @@ function NotesPage(props) {
 
     useEffect(() => {
         if (props.loginReducer.userState.user.role === RoleEnum.USER) {
-            const params = {};
-
-            if (startDate != null) {
-                params["from"] = startDate;
-            }
-
-            if (endDate != null) {
-                params["to"] = endDate;
-            }
-
-            axiosInstance
-                .get("/note/getNotes", { params: params })
-                .then((response) => {
-                    if (!responseIsSuccess(response)) {
-                        alertResponseMessages(response);
-                        return;
-                    }
-
-                    const indexedNotes = response.data.notes.map((note, index) => {
-                        return {
-                            ...note,
-                            key: index,
-                            actions: getNoteActions(note)
-                        }
-                    });
-                    setData(indexedNotes);
-                }, (error) => {
-                    alert(error);
-                });
+            performGetNotes(false);
+        } else if (props.loginReducer.userState.user.role === RoleEnum.ADMIN) {
+            performGetNotes(true);
         }
     }, [startDate, endDate]);
+
+    const performGetNotes = (weAreAdmin) => {
+        setData([]);
+
+        if (weAreAdmin && (!targetUserId || targetUserId <= 0)) {
+            return;
+        }
+
+        const params = {};
+
+        if (startDate != null) {
+            params["from"] = startDate;
+        }
+
+        if (endDate != null) {
+            params["to"] = endDate;
+        }
+
+        if (weAreAdmin) {
+            params["userId"] = targetUserId;
+        }
+
+        let url = weAreAdmin ? "/note/getNotesForUser" : "/note/getNotes";
+
+        axiosInstance
+            .get(url, { params: params })
+            .then((response) => {
+                if (!responseIsSuccess(response)) {
+                    alertResponseMessages(response);
+                    return;
+                }
+
+                const indexedNotes = response.data.notes.map((note, index) => {
+                    return {
+                        ...note,
+                        key: index,
+                        actions: getNoteActions(note)
+                    }
+                });
+                setData(indexedNotes);
+            }, (error) => {
+                alert(error);
+            });
+    }
 
     const onChangeStartDate = (values) => {
         if (values == null) {
@@ -129,11 +146,30 @@ function NotesPage(props) {
 
     }
 
+    const [targetUserId, setTargetUserId] = useState(0);
+
+    const onChangeTargetUserId = (value) => {
+        setTargetUserId(value);
+    }
+
+    const onEnterTargetUserId = () => {
+        performGetNotes(true);
+    }
+
     return (
         <div>
             <Space direction="vertical">
                 <br/>
                 <Space>
+                    {
+                        props.loginReducer.userState.user.role === RoleEnum.ADMIN &&
+                        <InputNumber
+                            name="targetUserId"
+                            placeholder="User Id"
+                            onChange={onChangeTargetUserId}
+                            onPressEnter={onEnterTargetUserId}
+                        />
+                    }
                     <DatePicker placeholder="Start Date" onChange={onChangeStartDate}/>
                     <DatePicker placeholder="End Date" onChange={onChangeEndDate}/>
                     <Button type="primary" onClick={handleExport}>

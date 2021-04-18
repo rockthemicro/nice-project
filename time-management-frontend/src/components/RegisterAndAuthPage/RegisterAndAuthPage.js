@@ -45,7 +45,7 @@ function RegisterAndAuthPage(props) {
                 props.loginAction(response.data);
 
                 const user = response.data.user;
-                if (user.role === RoleEnum.USER) {
+                if (user.role === RoleEnum.USER || user.role === RoleEnum.ADMIN) {
                     props.history.push("/notes");
                 } else {
                     props.history.push("/users");
