@@ -42,11 +42,23 @@ function NotesPage(props) {
             title: "Date",
             dataIndex: "date",
             render: render
+        }, {
+            title: "Actions",
+            dataIndex: "actions"
         }
     ];
     const [data, setData] = useState([]);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+
+    const getNoteActions = (note) => {
+        return (
+            <div>
+                <Button onClick={handleEditNote(note)}>Edit</Button>
+                <Button onClick={handleDeleteNote(note)}>Delete</Button>
+            </div>
+        );
+    }
 
     useEffect(() => {
         if (props.loginReducer.userState.user.role === RoleEnum.USER) {
@@ -71,7 +83,8 @@ function NotesPage(props) {
                     const indexedNotes = response.data.notes.map((note, index) => {
                         return {
                             ...note,
-                            key: index
+                            key: index,
+                            actions: getNoteActions(note)
                         }
                     });
                     setData(indexedNotes);
@@ -103,6 +116,17 @@ function NotesPage(props) {
 
     const handleAddNote = () => {
         props.history.push("/notes/editNote/0");
+    }
+
+    const handleEditNote = (note) => () => {
+        props.history.push("/notes/editNote/" + note.id, {
+            note: note
+        });
+    }
+
+
+    const handleDeleteNote = (note) => () => {
+
     }
 
     return (

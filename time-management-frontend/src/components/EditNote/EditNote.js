@@ -1,10 +1,11 @@
 import {compose} from "redux";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import React from "react";
-import {DatePicker, Button, Form, Input, InputNumber, Space} from "antd";
+import React, {useEffect} from "react";
+import {Button, DatePicker, Form, Input, InputNumber, Space} from "antd";
 import axiosInstance from "../../index";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
+import moment from "moment";
 
 const mapStateToProps = (state) => ({
 });
@@ -40,11 +41,28 @@ function EditNote(props) {
             })
     };
 
+    const [form] = Form.useForm();
+
+    useEffect(() => {
+        if (!props.location.state || !props.location.state.note) {
+            return;
+        }
+
+        const note = props.location.state.note;
+
+        // form.getFieldInstance("content").setValue(note.content);
+        const date = moment(note.date, "YYYY-MM-DD");
+        form.setFieldsValue({
+            content: note.content,
+            date: date,
+            hours: note.hours
+        });
+
+    }, []);
+
     const onCancel = () => {
         props.history.goBack();
     }
-
-    const [form] = Form.useForm();
 
     return (
         <div>
@@ -87,7 +105,10 @@ function EditNote(props) {
                     name="date"
                     validateStatus="success"
                 >
-                    <DatePicker style={{ width: '100%' }}/>
+                    <DatePicker
+                        name="datePicker"
+                        style={{ width: '100%' }}
+                    />
                 </Form.Item>
 
                 <Space>
