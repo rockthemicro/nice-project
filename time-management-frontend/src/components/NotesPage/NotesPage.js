@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import {compose} from "redux";
-import {Space, DatePicker, Table} from "antd";
+import {Space, DatePicker, Table, Button} from "antd";
 import RoleEnum from "../../RoleEnum";
 import axiosInstance from "../../index";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
@@ -15,16 +15,31 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 function NotesPage(props) {
+    const render = (text, row, index) => {
+        const color = row.flagged ? "red" : "green";
+
+        const obj = {
+            // children: row.flagged ? text.fontcolor("red") : text.fontcolor("green"),
+            children: <p style={{color: color}}> {text} </p>,
+            props: {},
+        };
+
+        return obj;
+    }
+
     const columns = [
         {
             title: "Content",
-            dataIndex: "content"
+            dataIndex: "content",
+            render: render
         }, {
             title: "Hours",
-            dataIndex: "hours"
+            dataIndex: "hours",
+            render: render
         }, {
             title: "Date",
-            dataIndex: "date"
+            dataIndex: "date",
+            render: render
         }
     ];
     const [data, setData] = useState([]);
@@ -87,6 +102,9 @@ function NotesPage(props) {
                 <Space>
                     <DatePicker placeholder="Start Date" onChange={onChangeStartDate}/>
                     <DatePicker placeholder="End Date" onChange={onChangeEndDate}/>
+                    <Button type="primary">
+                        Export
+                    </Button>
                 </Space>
                 <Table
                     columns={columns}

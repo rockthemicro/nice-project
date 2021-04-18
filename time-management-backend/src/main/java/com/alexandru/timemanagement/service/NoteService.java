@@ -78,7 +78,7 @@ public class NoteService {
             User user = userRepository.findByUsername(userDetails.getUsername())
                     .orElseThrow();
 
-            NoteDto[] notes = retrieveNotes(user.getId(), from, to);
+            NoteDto[] notes = retrieveNotes(user.getId(), from, to, user.getPreferredWorkingHours());
             output.setNotes(notes);
         }
 
@@ -95,7 +95,7 @@ public class NoteService {
             output.setStatusEnum(Output.StatusEnum.ERROR);
             output.addMessage(Output.StatusEnum.ERROR, YOU_CANT_CHANGE_NOTES);
         } else {
-            NoteDto[] notes = retrieveNotes(userId, from, to);
+            NoteDto[] notes = retrieveNotes(userId, from, to, user.getPreferredWorkingHours());
             output.setNotes(notes);
         }
 
@@ -136,7 +136,7 @@ public class NoteService {
         return output;
     }
 
-    private NoteDto[] retrieveNotes(Integer userId, Date from, Date to) {
+    private NoteDto[] retrieveNotes(Integer userId, Date from, Date to, Integer preferredWorkingHours) {
         List<Note> notes;
 
         if (from != null && to != null) {
@@ -149,9 +149,50 @@ public class NoteService {
             notes = noteRepository.findAllByUserIdOrderByDateDescIdAsc(userId);
         }
 
-        return notes.stream()
+        NoteDto[] result = notes.stream()
                 .map(NoteMapper.INSTANCE::noteToNoteDto)
                 .toArray(NoteDto[]::new);
+
+        /* set Notes as flagged if the sum of worked hours in a single day is under the preferred amount */
+        if (preferredWorkingHours == null || result.length == 0) {
+            return result;
+        }
+
+        return alterNotesIfNotEnoughHours(result, preferredWorkingHours);
+    }
+
+    private NoteDto[] alterNotesIfNotEnoughHours(NoteDto[] notes, Integer preferredWorkingHours) {
+
+        int idxOfFirstNote, idxOfLastNote;
+        for (idxOfFirstNote = 0; idxOfFirstNote < notes.length; idxOfFirstNote++) {
+            Date date1 = notes[idxOfFirstNote].getDate();
+            float workedHoursInADay = 0;
+
+            for (idxOfLastNote = idxOfFirstNote; idxOfLastNote < notes.length; idxOfLastNote++) {
+                Date date2 = notes[idxOfLastNote].getDate();
+
+                if (!date1.equals(date2)) {
+                    idxOfLastNote--;
+                    break;
+                } else {
+                    workedHoursInADay += notes[idxOfLastNote].getHours();
+                }
+
+                if (idxOfLastNote == notes.length - 1) {
+                    break;
+                }
+            }
+
+            if (workedHoursInADay < preferredWorkingHours) {
+                for (int i = idxOfFirstNote; i <= idxOfLastNote; i++) {
+                    notes[i].setFlagged(true);
+                }
+            }
+
+            idxOfFirstNote = idxOfLastNote;
+        }
+
+        return notes;
     }
 
     private Output saveNoteForUser(NoteDto noteDto, User user) {

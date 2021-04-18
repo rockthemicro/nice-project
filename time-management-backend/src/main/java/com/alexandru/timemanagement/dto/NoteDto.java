@@ -14,4 +14,5 @@ public class NoteDto {
     private String content;
     private Float hours;
     private Date date;
+    private boolean flagged = false;
 }
