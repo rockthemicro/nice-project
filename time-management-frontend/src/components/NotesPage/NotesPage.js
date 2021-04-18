@@ -102,7 +102,7 @@ function NotesPage(props) {
     }
 
     const handleAddNote = () => {
-        props.history.push("/notes/editNote");
+        props.history.push("/notes/editNote/0");
     }
 
     return (

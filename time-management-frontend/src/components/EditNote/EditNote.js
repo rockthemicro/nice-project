@@ -23,6 +23,7 @@ function EditNote(props) {
 
         axiosInstance
             .post("/note/createOrUpdate", {
+                id: props.match.params.noteId,
                 content: values.content,
                 hours: values.hours,
                 date: values.date.format("YYYY-MM-DD")
