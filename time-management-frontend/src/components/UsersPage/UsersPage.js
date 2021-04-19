@@ -19,17 +19,21 @@ const mapDispatchToProps = (dispatch) => ({
 function UsersPage(props) {
     const [form] = Form.useForm();
 
-    const onFinish = (values) => {
-
-    }
-
+    /**
+     * targetUser is the user whose information will be desplayed in the form
+     * if we are at path /user, then targetUser is the logged user
+     * if we are at path /users/:userId, then targetUser is the user with id :userId
+     */
     const [targetUser, setTargetUser] = useState({});
+
+    /**
+     * this is the value of the InputNumber box for switching the targetUser
+     */
     const [inputUserId, setInputUserId] = useState(0);
 
     const performLoadUser = () => {
         const userId = props.match.params.userId;
 
-        debugger;
         if (userId !== undefined && userId !== "0") {
             axiosInstance
                 .get("/user/manage/getUser", { params: {
@@ -54,10 +58,17 @@ function UsersPage(props) {
         }
     }
 
+    /**
+     * Step 3 page is reloaded when userId is changed
+     */
     useEffect(() => {
         performLoadUser();
     }, [props.match.params.userId]);
 
+    /**
+     * Step 4 performLoadUser will update the targetUser, and this will trigger the
+     * re-rendering of our components
+     */
     useEffect(() => {
         form.setFieldsValue({
             username: targetUser.username,
@@ -68,12 +79,28 @@ function UsersPage(props) {
         })
     }, [targetUser]);
 
+    /**
+     * Step 1 Change the User Id
+     * @param value
+     */
     const onChangeInputUserId = (value) => {
         setInputUserId(value);
     }
 
+    /**
+     * Step 2 Press enter on User Id and trigger page reload by changing
+     * :noteId at /users/:noteId
+     */
     const onEnterInputUserId = () => {
         props.history.push("/users/" + inputUserId);
+    }
+
+    const handleCancelForm = () => {
+        performLoadUser();
+    }
+
+    const onFinish = (values) => {
+
     }
 
     return (
@@ -175,7 +202,7 @@ function UsersPage(props) {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button>
+                            <Button onClick={handleCancelForm}>
                                 Cancel
                             </Button>
                         </Form.Item>
