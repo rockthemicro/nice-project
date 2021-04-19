@@ -24,10 +24,10 @@ function App() {
                     <NotesPage/>
                 </Route>
 
-                <Route path="/users/:userId">
+                <Route exact path="/users/:userId">
                     <UsersPage/>
                 </Route>
-                <Route path="/users">
+                <Route exact path="/user">
                     <UsersPage/>
                 </Route>
 

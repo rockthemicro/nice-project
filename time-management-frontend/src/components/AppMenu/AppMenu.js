@@ -31,7 +31,7 @@ function AppMenu(props) {
     }
 
     const handleOnClickMyProfile = () => {
-        props.history.push("/users");
+        props.history.push("/user");
     }
 
     const handleOnClickProfiles = () => {

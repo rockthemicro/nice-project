@@ -28,8 +28,8 @@ function UsersPage(props) {
 
     const performLoadUser = () => {
         const userId = props.match.params.userId;
-        debugger;
 
+        debugger;
         if (userId !== undefined && userId !== "0") {
             axiosInstance
                 .get("/user/manage/getUser", { params: {
@@ -44,6 +44,7 @@ function UsersPage(props) {
                     setTargetUser(response.data.user);
 
                 }, (error) => {
+                    setTargetUser({});
                     alert(error);
                 })
         } else if (userId === undefined) {
@@ -55,7 +56,7 @@ function UsersPage(props) {
 
     useEffect(() => {
         performLoadUser();
-    }, []);
+    }, [props.match.params.userId]);
 
     useEffect(() => {
         form.setFieldsValue({
@@ -73,113 +74,113 @@ function UsersPage(props) {
 
     const onEnterInputUserId = () => {
         props.history.push("/users/" + inputUserId);
-        performLoadUser();
     }
 
     return (
         <div>
             <Space direction="vertical" size={25}>
-            <InputNumber
-                min={1}
-                style={{width: "100%"}}
-                placeholder="User Id"
-                onChange={onChangeInputUserId}
-                onPressEnter={onEnterInputUserId}
-            />
-            <Form
-                form={form}
-                name="user_form"
-                initialValues={{
-                    remember: true,
-                }}
-                onFinish={onFinish}
-                size={"large"}
-                style={{maxWidth: '400px', margin: '0 auto'}}
-            >
-                <Form.Item
-                    name="username"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please input your Username!',
-                        },
-                    ]}
+                {props.match.params.userId &&
+                <InputNumber
+                    min={1}
+                    style={{width: "100%"}}
+                    placeholder="User Id"
+                    onChange={onChangeInputUserId}
+                    onPressEnter={onEnterInputUserId}
+                />}
+                <Form
+                    form={form}
+                    name="user_form"
+                    initialValues={{
+                        remember: true,
+                    }}
+                    onFinish={onFinish}
+                    size={"large"}
+                    style={{maxWidth: '400px', margin: '0 auto'}}
                 >
-                    <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
-                </Form.Item>
-
-
-                <Form.Item
-                    name="password"
-                >
-                    <Input.Password
-                        prefix={<LockOutlined className="site-form-item-icon"/>}
-                        type="password"
-                        placeholder="Password"
-                    />
-                </Form.Item>
-
-
-                <Form.Item
-                    name="repeat_password"
-                >
-                    <Input.Password
-                        prefix={<LockOutlined className="site-form-item-icon"/>}
-                        type="password"
-                        placeholder="Repeat Password"
-                    />
-                </Form.Item>
-
-                <Form.Item
-                    name="preferredWorkingHours"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please input the preferred working hours per day!',
-                        },
-                    ]}
-                >
-                    <InputNumber
-                        style={{width: "100%"}}
-                        min={1}
-                        placeholder="Preferred Working Hours"
-                    />
-                </Form.Item>
-
-
-                <Form.Item
-                    name="role"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please choose a role!",
-                        }
-                    ]}
-                >
-                    <Select
-                        placeholder="Role"
+                    <Form.Item
+                        name="username"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input your Username!',
+                            },
+                        ]}
                     >
-                        <Select.Option value={RoleEnum.USER}>{RoleEnum.USER}</Select.Option>
-                        <Select.Option value={RoleEnum.MANAGER}>{RoleEnum.MANAGER}</Select.Option>
-                        <Select.Option value={RoleEnum.ADMIN}>{RoleEnum.ADMIN}</Select.Option>
-                    </Select>
-                </Form.Item>
-
-
-                <Space>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
+                        <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
                     </Form.Item>
 
-                    <Form.Item>
-                        <Button>
-                            Cancel
-                        </Button>
+
+                    <Form.Item
+                        name="password"
+                    >
+                        <Input.Password
+                            prefix={<LockOutlined className="site-form-item-icon"/>}
+                            type="password"
+                            placeholder="Password"
+                        />
                     </Form.Item>
-                </Space>
-            </Form>
+
+
+                    <Form.Item
+                        name="repeat_password"
+                    >
+                        <Input.Password
+                            prefix={<LockOutlined className="site-form-item-icon"/>}
+                            type="password"
+                            placeholder="Repeat Password"
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="preferredWorkingHours"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input the preferred working hours per day!',
+                            },
+                        ]}
+                    >
+                        <InputNumber
+                            style={{width: "100%"}}
+                            min={1}
+                            placeholder="Preferred Working Hours"
+                        />
+                    </Form.Item>
+
+
+                    <Form.Item
+                        name="role"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please choose a role!",
+                            }
+                        ]}
+                    >
+                        <Select
+                            placeholder="Role"
+                        >
+                            <Select.Option value={RoleEnum.USER}>{RoleEnum.USER}</Select.Option>
+                            <Select.Option value={RoleEnum.MANAGER}>{RoleEnum.MANAGER}</Select.Option>
+                            <Select.Option value={RoleEnum.ADMIN}>{RoleEnum.ADMIN}</Select.Option>
+                        </Select>
+                    </Form.Item>
+
+
+                    <Space>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Submit
+                            </Button>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button>
+                                Cancel
+                            </Button>
+                        </Form.Item>
+                    </Space>
+                </Form>
             </Space>
         </div>
     );
