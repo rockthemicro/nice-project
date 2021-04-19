@@ -100,7 +100,38 @@ function UsersPage(props) {
     }
 
     const onFinish = (values) => {
+        let url;
+        const postData = {
+            id: targetUser.id,
+            username: values.username,
+            role: values.role,
+            preferredWorkingHours: values.preferredWorkingHours
+        };
 
+        if (values.password || values.repeat_password) {
+            if (values.password === values.repeat_password) {
+                postData.password = values.password;
+            } else {
+                alert("Passwords don't match!");
+                return;
+            }
+        }
+
+        if (targetUser.id === props.loginReducer.userState.user.id) {
+            url = "/user/selfUpdate";
+        } else {
+            url = "/user/manage/createOrUpdate";
+        }
+
+        axiosInstance
+            .post(url, postData)
+            .then((response) => {
+                if (!responseIsSuccess(response)) {
+                    alertResponseMessages(response);
+                }
+            }, (error) => {
+                alert(error);
+            });
     }
 
     return (
