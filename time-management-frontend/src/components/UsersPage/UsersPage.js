@@ -145,6 +145,23 @@ function UsersPage(props) {
             });
     }
 
+    const handleOnDelete = () => {
+        const url = "/user/manage/deleteUser";
+
+        axiosInstance
+            .delete(url, {params: {userId: props.match.params.userId}})
+            .then((response) => {
+                if (!responseIsSuccess(response)) {
+                    alertResponseMessages(response);
+                    return;
+                }
+
+                props.history.push("/users/0");
+            }, (error) => {
+                alert(error);
+            });
+    }
+
     return (
         <div>
             <Space direction="vertical" size={25}>
@@ -242,6 +259,13 @@ function UsersPage(props) {
                                 Cancel
                             </Button>
                         </Form.Item>
+
+                        {props.match.params.userId &&
+                        <Form.Item>
+                            <Button type="primary" danger onClick={handleOnDelete}>
+                                Delete
+                            </Button>
+                        </Form.Item>}
                     </Space>
                 </Form>
             </Space>

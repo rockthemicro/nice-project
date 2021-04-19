@@ -1,10 +1,9 @@
-import {Menu, Button} from "antd";
+import {Button, Menu} from "antd";
 import React, {useState} from "react";
 import {CalendarOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, TeamOutlined} from "@ant-design/icons";
 import {compose} from "redux";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import loginReducer from "../../reducers/loginReducer";
 import RoleEnum from "../../RoleEnum";
 
 const mapStateToProps = (state) => ({
