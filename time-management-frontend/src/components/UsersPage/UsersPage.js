@@ -7,6 +7,7 @@ import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import RoleEnum from "../../RoleEnum";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
 import axiosInstance from "../../index";
+import loginAction from "../../actions/loginAction";
 
 
 const mapStateToProps = (state) => ({
@@ -14,6 +15,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+    loginAction: (userState) => dispatch(loginAction(userState))
 });
 
 function UsersPage(props) {
@@ -101,6 +103,7 @@ function UsersPage(props) {
 
     const onFinish = (values) => {
         let url;
+        let isSelfUpdate = false;
         const postData = {
             id: targetUser.id,
             username: values.username,
@@ -119,6 +122,7 @@ function UsersPage(props) {
 
         if (targetUser.id === props.loginReducer.userState.user.id) {
             url = "/user/selfUpdate";
+            isSelfUpdate = true;
         } else {
             url = "/user/manage/createOrUpdate";
         }
@@ -128,6 +132,13 @@ function UsersPage(props) {
             .then((response) => {
                 if (!responseIsSuccess(response)) {
                     alertResponseMessages(response);
+                }
+
+                if (isSelfUpdate) {
+                    props.loginAction({
+                        token: props.loginReducer.userState.token,
+                        user: postData
+                    });
                 }
             }, (error) => {
                 alert(error);
@@ -191,12 +202,6 @@ function UsersPage(props) {
 
                     <Form.Item
                         name="preferredWorkingHours"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input the preferred working hours per day!',
-                            },
-                        ]}
                     >
                         <InputNumber
                             style={{width: "100%"}}

@@ -48,7 +48,7 @@ function RegisterAndAuthPage(props) {
                 if (user.role === RoleEnum.USER || user.role === RoleEnum.ADMIN) {
                     props.history.push("/notes");
                 } else {
-                    props.history.push("/users");
+                    props.history.push("/user");
                 }
 
             }, (error) => {

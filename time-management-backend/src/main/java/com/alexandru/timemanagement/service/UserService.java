@@ -176,6 +176,8 @@ public class UserService {
         user = UserMapper.INSTANCE.userDtoToUser(userDto);
         if (ObjectUtils.isEmpty(user.getPassword())) {
             user.setPassword(formerPassword);
+        } else {
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
 
         userRepository.saveAndFlush(user);
