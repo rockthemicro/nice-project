@@ -217,10 +217,10 @@ public class UserService {
         return output;
     }
 
-    public GetUserOutput getUser(String username) {
+    public GetUserOutput getUser(Integer userId) {
         GetUserOutput output = new GetUserOutput();
 
-        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<User> userOpt = userRepository.findById(userId);
 
         if (userOpt.isEmpty()) {
             output.setStatusEnum(Output.StatusEnum.ERROR);

@@ -73,8 +73,8 @@ public class UserController {
 
     @RequestMapping(value = "/manage/getUser",
                     method = RequestMethod.GET)
-    public ResponseEntity<GetUserOutput> getUser(@RequestParam String username) {
-        GetUserOutput output = userService.getUser(username);
+    public ResponseEntity<GetUserOutput> getUser(@RequestParam Integer userId) {
+        GetUserOutput output = userService.getUser(userId);
 
         return ResponseEntity
                 .ok()

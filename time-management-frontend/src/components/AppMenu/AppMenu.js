@@ -26,6 +26,18 @@ function AppMenu(props) {
 
     const userRole = props.loginReducer.userState.user.role;
 
+    const handleOnClickNotes = () => {
+        props.history.push("/notes");
+    }
+
+    const handleOnClickMyProfile = () => {
+        props.history.push("/users");
+    }
+
+    const handleOnClickProfiles = () => {
+        props.history.push("/users/0");
+    }
+
     return (
         <div>
             <Button type="primary" onClick={toggleCollapsed} style={{marginBottom: 16}}>
@@ -39,13 +51,29 @@ function AppMenu(props) {
                 inlineCollapsed={collapsed}
             >
 
-                {userRole !== RoleEnum.MANAGER && <Menu.Item key="notes" icon={<CalendarOutlined/>}>
+                {userRole !== RoleEnum.MANAGER &&
+                <Menu.Item
+                    key="notes"
+                    icon={<CalendarOutlined/>}
+                    onClick={handleOnClickNotes}
+                >
                     Notes
                 </Menu.Item>}
-                <Menu.Item key="myProfile" icon={<SettingOutlined/>}>
+
+                <Menu.Item
+                    key="myProfile"
+                    icon={<SettingOutlined/>}
+                    onClick={handleOnClickMyProfile}
+                >
                     My profile
                 </Menu.Item>
-                {userRole !== RoleEnum.USER && <Menu.Item key="profiles" icon={<TeamOutlined/>}>
+
+                {userRole !== RoleEnum.USER &&
+                <Menu.Item
+                    key="profiles"
+                    icon={<TeamOutlined/>}
+                    onClick={handleOnClickProfiles}
+                >
                     Profiles
                 </Menu.Item>}
             </Menu>

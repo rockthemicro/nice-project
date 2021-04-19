@@ -215,7 +215,7 @@ class TimeManagementApplicationTests {
 
 		MvcResult mvcResult = mockMvc
 				.perform(get("/api/user/manage/getUser")
-						.param("username", regularUser.getUsername())
+						.param("userId", String.valueOf(regularUser.getId()))
 						.header(SecurityConstants.HEADER_STRING,
 								SecurityConstants.TOKEN_PREFIX + adminToken))
 				.andExpect(status().isOk())
