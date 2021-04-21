@@ -192,7 +192,11 @@ function UsersPage(props) {
                             },
                         ]}
                     >
-                        <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
+                        <Input
+                            prefix={<UserOutlined className="site-form-item-icon"/>}
+                            placeholder="Username"
+                            disabled={!props.match.params.userId}
+                        />
                     </Form.Item>
 
 
