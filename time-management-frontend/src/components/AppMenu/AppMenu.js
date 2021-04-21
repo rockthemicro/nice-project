@@ -1,16 +1,25 @@
 import {Button, Menu} from "antd";
 import React, {useState} from "react";
-import {CalendarOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, TeamOutlined} from "@ant-design/icons";
+import {
+    CalendarOutlined,
+    LogoutOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    SettingOutlined,
+    TeamOutlined
+} from "@ant-design/icons";
 import {compose} from "redux";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import RoleEnum from "../../RoleEnum";
+import loginAction from "../../actions/loginAction";
 
 const mapStateToProps = (state) => ({
     loginReducer: state.loginReducer
 });
 
 const mapDispatchToProps = (dispatch) => ({
+    loginAction: (userState) => dispatch(loginAction(userState))
 });
 
 function AppMenu(props) {
@@ -19,7 +28,8 @@ function AppMenu(props) {
         setCollapsed(!collapsed);
     }
 
-    if (props.history.location.pathname === "/") {
+    if (props.history.location.pathname === "/"
+        || !props.loginReducer.userState.token) {
         return (<div/>);
     }
 
@@ -35,6 +45,20 @@ function AppMenu(props) {
 
     const handleOnClickProfiles = () => {
         props.history.push("/users/0");
+    }
+
+    const handleOnClickLogout = () => {
+        props.loginAction({
+            token: "",
+            user: {
+                id: 0,
+                username: "",
+                password: "",
+                preferredWorkingHours: 0,
+                role: RoleEnum.USER,
+            }
+        });
+        props.history.push("/");
     }
 
     return (
@@ -75,6 +99,13 @@ function AppMenu(props) {
                 >
                     Profiles
                 </Menu.Item>}
+                <Menu.Item
+                    key="logout"
+                    onClick={handleOnClickLogout}
+                    icon={<LogoutOutlined/>}
+                >
+                    Log Out
+                </Menu.Item>
             </Menu>
         </div>
     );
