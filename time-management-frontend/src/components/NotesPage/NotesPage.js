@@ -63,12 +63,16 @@ function NotesPage(props) {
     }
 
     useEffect(() => {
+        if (props.loginReducer.userState.user.id === 0) {
+            return;
+        }
+
         if (props.loginReducer.userState.user.role === RoleEnum.USER) {
             performGetNotes(false);
         } else if (props.loginReducer.userState.user.role === RoleEnum.ADMIN) {
             performGetNotes(true);
         }
-    }, [startDate, endDate]);
+    }, [startDate, endDate, props.loginReducer.userState.user.id]);
 
     const performGetNotes = (weAreAdmin) => {
         setData([]);
