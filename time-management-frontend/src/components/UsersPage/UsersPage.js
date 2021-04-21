@@ -64,8 +64,11 @@ function UsersPage(props) {
      * Step 3 page is reloaded when userId is changed
      */
     useEffect(() => {
+        if (props.loginReducer.userState.user.id === 0) {
+            return;
+        }
         performLoadUser();
-    }, [props.match.params.userId]);
+    }, [props.match.params.userId, props.loginReducer.userState.user.id]);
 
     /**
      * Step 4 performLoadUser will update the targetUser, and this will trigger the
