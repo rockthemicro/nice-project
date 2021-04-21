@@ -4,12 +4,12 @@ import {connect} from "react-redux";
 import {Button, Form, Input, Switch} from 'antd';
 import {LockOutlined, UserOutlined} from '@ant-design/icons';
 import 'antd/dist/antd.css';
-import axiosInstance from "../../index";
 import loginAction from "../../actions/loginAction";
 import {compose} from "redux";
 import {withRouter} from "react-router-dom";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
 import RoleEnum from "../../RoleEnum";
+import axios from "axios";
 
 const mapStateToProps = (state) => ({
 });
@@ -31,7 +31,7 @@ function RegisterAndAuthPage(props) {
     }
 
     const handleLogin = (values) => {
-        axiosInstance
+        axios
             .post("/user/auth", {
                 username: values.username,
                 password: values.password
@@ -62,7 +62,7 @@ function RegisterAndAuthPage(props) {
             return;
         }
 
-        axiosInstance
+        axios
             .post("/user/register", {
                 username: values.username,
                 password: values.password

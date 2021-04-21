@@ -4,10 +4,10 @@ import {withRouter} from "react-router-dom";
 import {compose} from "redux";
 import {Button, DatePicker, InputNumber, Space, Table} from "antd";
 import RoleEnum from "../../RoleEnum";
-import axiosInstance from "../../index";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
 import exportNotes from "./exportNotes";
 import fileDownload from 'js-file-download'
+import axios from "axios";
 
 const mapStateToProps = (state) => ({
     loginReducer: state.loginReducer
@@ -93,7 +93,7 @@ function NotesPage(props) {
 
         let url = weAreAdmin ? "/note/getNotesForUser" : "/note/getNotes";
 
-        axiosInstance
+        axios
             .get(url, { params: params })
             .then((response) => {
                 if (!responseIsSuccess(response)) {
@@ -169,7 +169,7 @@ function NotesPage(props) {
             weAreAdmin = false;
         }
 
-        axiosInstance
+        axios
             .delete(url, {
                 params: params,
                 data: deleteData

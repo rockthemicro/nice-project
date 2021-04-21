@@ -6,8 +6,8 @@ import {Space, Select, Form, Input, InputNumber, Button} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import RoleEnum from "../../RoleEnum";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
-import axiosInstance from "../../index";
 import loginAction from "../../actions/loginAction";
+import axios from "axios";
 
 
 const mapStateToProps = (state) => ({
@@ -37,7 +37,7 @@ function UsersPage(props) {
         const userId = props.match.params.userId;
 
         if (userId !== undefined && userId !== "0") {
-            axiosInstance
+            axios
                 .get("/user/manage/getUser", { params: {
                         userId: props.match.params.userId
                     }})
@@ -127,7 +127,7 @@ function UsersPage(props) {
             url = "/user/manage/createOrUpdate";
         }
 
-        axiosInstance
+        axios
             .post(url, postData)
             .then((response) => {
                 if (!responseIsSuccess(response)) {
@@ -148,7 +148,7 @@ function UsersPage(props) {
     const handleOnDelete = () => {
         const url = "/user/manage/deleteUser";
 
-        axiosInstance
+        axios
             .delete(url, {params: {userId: props.match.params.userId}})
             .then((response) => {
                 if (!responseIsSuccess(response)) {

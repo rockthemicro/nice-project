@@ -3,9 +3,9 @@ import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import React, {useEffect} from "react";
 import {Button, DatePicker, Form, Input, InputNumber, Space} from "antd";
-import axiosInstance from "../../index";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
 import moment from "moment";
+import axios from "axios";
 
 const mapStateToProps = (state) => ({
 });
@@ -31,7 +31,7 @@ function EditNote(props) {
             url = "/note/createOrUpdate";
         }
 
-        axiosInstance
+        axios
             .post(url, {
                 id: props.match.params.noteId,
                 content: values.content,

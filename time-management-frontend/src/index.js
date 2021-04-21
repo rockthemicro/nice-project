@@ -25,14 +25,12 @@ const store = configureStore({
     }
 });
 
-const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080/api'
-});
-
-axiosInstance.interceptors.request.use(req => {
+axios.interceptors.request.use(req => {
     if (store.getState().loginReducer.userState.token) {
         req.headers.authorization = 'Bearer ' + store.getState().loginReducer.userState.token;
     }
+
+    req.baseURL = 'http://localhost:8080/api';
 
     return req;
 });
@@ -47,5 +45,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-export default axiosInstance;

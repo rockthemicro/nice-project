@@ -1,13 +1,12 @@
 
-export default (state = {}, action) => {
+const loginReducer = (state = {}, action) => {
     if (action.type === "LOG_IN") {
         return {
-            userState: {
-                token: action.payload.token,
-                user: action.payload.user
-            }
+            userState: action.payload
         }
     }
 
     return state;
 };
+
+export default loginReducer;

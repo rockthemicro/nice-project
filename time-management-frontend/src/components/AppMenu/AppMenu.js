@@ -19,7 +19,7 @@ function AppMenu(props) {
         setCollapsed(!collapsed);
     }
 
-    if (!props.loginReducer.userState.token) {
+    if (props.history.location.pathname === "/") {
         return (<div/>);
     }
 
