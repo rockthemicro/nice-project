@@ -2,13 +2,14 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import {compose} from "redux";
-import {Button, DatePicker, Select, Space, Table} from "antd";
+import {Form, Button, DatePicker, Select, Space, Table} from "antd";
 import RoleEnum from "../../common/RoleEnum";
 import {alertResponseMessages, responseIsSuccess} from "../../common/ResponseUtils";
 import exportNotes from "./exportNotes";
 import fileDownload from 'js-file-download'
 import axios from "axios";
 import {getUsers} from "../../common/Utils";
+import moment from "moment";
 
 const mapStateToProps = (state) => ({
     loginReducer: state.loginReducer
@@ -48,10 +49,12 @@ function NotesPage(props) {
         }
     ];
     const [data, setData] = useState([]);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [enteredTargetUserId, setEnteredTargetUserId] = useState(0);
-
+    const [startDate, setStartDate] = useState(!!props.location.state?.startDate ?
+        props.location.state.startDate : null);
+    const [endDate, setEndDate] = useState(!!props.location.state?.endDate ?
+        props.location.state.endDate : null);
+    const [enteredTargetUserId, setEnteredTargetUserId] = useState(!!props.location.state?.targetUserId ?
+        props.location.state.targetUserId : 0);
 
     const getNoteActions = (note) => {
         return (
@@ -152,12 +155,19 @@ function NotesPage(props) {
     }
 
     const handleAddNote = () => {
-        props.history.push("/notes/editNote/0" + getEditNotesUserIdSuffix());
+        props.history.push("/notes/editNote/0" + getEditNotesUserIdSuffix(), {
+            startDate: startDate,
+            endDate: endDate,
+            targetUserId: enteredTargetUserId
+        });
     }
 
     const handleEditNote = (note) => () => {
         props.history.push("/notes/editNote/" + note.id + getEditNotesUserIdSuffix(), {
-            note: note
+            note: note,
+            startDate: startDate,
+            endDate: endDate,
+            targetUserId: enteredTargetUserId
         });
     }
 
@@ -220,40 +230,85 @@ function NotesPage(props) {
         setEnteredTargetUserId(userOption.id);
     }
 
+    const [form] = Form.useForm();
+
+    /**
+     * When we return from EditNote, we need to update the appearance
+     * of startDate, endDate and Target Username
+     */
+    useEffect(() => {
+        const data = {};
+
+        if (!!props.location.state?.startDate) {
+            data.startDate = moment(props.location.state.startDate, "YYYY-MM-DD");
+        }
+
+        if (!!props.location.state?.endDate) {
+            data.endDate = moment(props.location.state.endDate, "YYYY-MM-DD");
+        }
+
+        if (!!props.location.state?.targetUserId && userOptions.length !== 0) {
+            const targetUserId = props.location.state.targetUserId;
+            const userOptionsIds = userOptions.map(user => user.id);
+            const index = userOptionsIds.indexOf(targetUserId);
+            const userOption = userOptions[index];
+
+            data.target_username = userOption.username;
+        }
+
+        form.setFieldsValue(data);
+
+    }, [props.location.state, userOptions]);
+
     return (
         <div>
             <Space direction="vertical">
                 <br/>
-                <Space>
-                    {props.loginReducer.userState.user.role === RoleEnum.ADMIN &&
-                    <Select
-                        showSearch
-                        style={{width: "200px"}}
-                        placeholder="Target Username"
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                        onChange={onSelectChange}
-                    >
-                        {userOptions.map((user, index) => {
-                            return (
-                                <Select.Option value={user.username} key={index}>
-                                    {user.username}
-                                </Select.Option>
-                            );
-                        })}
-                    </Select>}
+                <Form form={form}>
+                    <Space>
+                        {props.loginReducer.userState.user.role === RoleEnum.ADMIN &&
+                        <Form.Item name="target_username">
+                            <Select
+                                showSearch
+                                style={{width: "200px"}}
+                                placeholder="Target Username"
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                onChange={onSelectChange}
+                            >
+                                {userOptions.map((user, index) => {
+                                    return (
+                                        <Select.Option value={user.username} key={index}>
+                                            {user.username}
+                                        </Select.Option>
+                                    );
+                                })}
+                            </Select>
+                        </Form.Item>}
 
-                    <DatePicker placeholder="Start Date" onChange={onChangeStartDate}/>
-                    <DatePicker placeholder="End Date" onChange={onChangeEndDate}/>
-                    <Button type="primary" onClick={handleExport}>
-                        Export
-                    </Button>
-                    <Button onClick={handleAddNote}>
-                        Add Note
-                    </Button>
-                </Space>
+                        <Form.Item name="startDate">
+                            <DatePicker placeholder="Start Date" onChange={onChangeStartDate}/>
+                        </Form.Item>
+
+                        <Form.Item name="endDate" >
+                            <DatePicker placeholder="End Date" onChange={onChangeEndDate}/>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button type="primary" onClick={handleExport}>
+                                Export
+                            </Button>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button onClick={handleAddNote}>
+                                Add Note
+                            </Button>
+                        </Form.Item>
+                    </Space>
+                </Form>
                 <Table
                     columns={columns}
                     dataSource={data} // Step 3 Table gets reloaded

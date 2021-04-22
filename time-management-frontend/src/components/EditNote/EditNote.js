@@ -43,7 +43,11 @@ function EditNote(props) {
                     alertResponseMessages(response);
                     return;
                 }
-                props.history.push("/notes");
+                props.history.push("/notes", {
+                    startDate: props.location.state.startDate,
+                    endDate: props.location.state.endDate,
+                    targetUserId: props.location.state.targetUserId
+                });
 
             }, (error) => {
                 alert(error);
@@ -69,7 +73,11 @@ function EditNote(props) {
     }, []);
 
     const onCancel = () => {
-        props.history.goBack();
+        props.history.push("/notes", {
+            startDate: props.location.state.startDate,
+            endDate: props.location.state.endDate,
+            targetUserId: props.location.state.targetUserId
+        });
     }
 
     return (
