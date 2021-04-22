@@ -50,7 +50,7 @@ function UsersPage(props) {
                     alert(error);
                 })
         } else if (userId === undefined) {
-            setTargetUser(props.loginReducer.userState.user);
+            setTargetUser({...props.loginReducer.userState.user});
         } else {
             setTargetUser({});
         }
