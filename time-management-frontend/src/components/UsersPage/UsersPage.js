@@ -36,7 +36,7 @@ function UsersPage(props) {
             axios
                 .get("/user/manage/getUser", { params: {
                         userId: props.match.params.userId
-                    }})
+                }})
                 .then((response) => {
                     if (!responseIsSuccess(response)) {
                         alertResponseMessages(response);
@@ -122,6 +122,7 @@ function UsersPage(props) {
             .then((response) => {
                 if (!responseIsSuccess(response)) {
                     alertResponseMessages(response);
+                    return;
                 }
 
                 if (isSelfUpdate) {
