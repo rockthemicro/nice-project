@@ -4,6 +4,7 @@ import com.alexandru.timemanagement.dto.UserDto;
 import com.alexandru.timemanagement.dto.input.AuthInput;
 import com.alexandru.timemanagement.dto.output.AuthOutput;
 import com.alexandru.timemanagement.dto.output.GetUserOutput;
+import com.alexandru.timemanagement.dto.output.GetUsersOutput;
 import com.alexandru.timemanagement.dto.output.Output;
 import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.dto.output.RegisterOutput;
@@ -75,6 +76,16 @@ public class UserController {
                     method = RequestMethod.GET)
     public ResponseEntity<GetUserOutput> getUser(@RequestParam Integer userId) {
         GetUserOutput output = userService.getUser(userId);
+
+        return ResponseEntity
+                .ok()
+                .body(output);
+    }
+
+    @RequestMapping(value = "/manage/getUsers",
+            method = RequestMethod.GET)
+    public ResponseEntity<GetUsersOutput> getUsers() {
+        GetUsersOutput output = userService.getUsers();
 
         return ResponseEntity
                 .ok()

@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import {Route, Switch} from "react-router-dom";
-import RegisterAndAuthPage from "./components/RegisterAndAuthPage/index";
+import RegisterAndAuthPage from "./components/RegisterAndAuthPage/RegisterAndAuthPage";
 import NotesPage from "./components/NotesPage/NotesPage";
 import UsersPage from "./components/UsersPage/UsersPage";
 import EditNote from "./components/EditNote/EditNote";

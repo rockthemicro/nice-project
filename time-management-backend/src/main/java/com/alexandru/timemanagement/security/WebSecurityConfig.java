@@ -43,8 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(ENDPOINT_CREATE_OR_UPDATE_NOTE_FOR_USER).hasAuthority(User.RoleEnum.ADMIN.toString())
                     .antMatchers(ENDPOINT_GET_NOTES_FOR_USER).hasAuthority(User.RoleEnum.ADMIN.toString())
                     .antMatchers(ENDPOINT_DELETE_NOTES_FOR_USER).hasAuthority(User.RoleEnum.ADMIN.toString())
-                    .antMatchers("/api/test/ping-manager").hasAuthority(User.RoleEnum.MANAGER.toString())
-                    .antMatchers("/api/test/ping-admin").hasAuthority(User.RoleEnum.ADMIN.toString())
                     .anyRequest().authenticated()
                     .and()
                 .exceptionHandling().and()

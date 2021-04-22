@@ -5,6 +5,7 @@ import com.alexandru.timemanagement.dto.input.AuthInput;
 import com.alexandru.timemanagement.dto.input.RegisterInput;
 import com.alexandru.timemanagement.dto.output.AuthOutput;
 import com.alexandru.timemanagement.dto.output.GetUserOutput;
+import com.alexandru.timemanagement.dto.output.GetUsersOutput;
 import com.alexandru.timemanagement.dto.output.Output;
 import com.alexandru.timemanagement.dto.output.RegisterOutput;
 import com.alexandru.timemanagement.model.User;
@@ -237,4 +238,16 @@ public class UserService {
         return output;
     }
 
+    public GetUsersOutput getUsers() {
+        GetUsersOutput output = new GetUsersOutput();
+        UserDto[] users = userRepository
+                .findAll()
+                .stream()
+                .map(UserMapper.INSTANCE::userToUserDto)
+                .peek(userDto -> userDto.setPassword(null))
+                .toArray(UserDto[]::new);
+
+        output.setUsers(users);
+        return output;
+    }
 }

@@ -28,11 +28,6 @@ function UsersPage(props) {
      */
     const [targetUser, setTargetUser] = useState({});
 
-    /**
-     * this is the value of the InputNumber box for switching the targetUser
-     */
-    const [inputUserId, setInputUserId] = useState(0);
-
     const performLoadUser = () => {
         const userId = props.match.params.userId;
 
@@ -61,7 +56,34 @@ function UsersPage(props) {
     }
 
     /**
-     * Step 3 page is reloaded when userId is changed
+     * Fill the User Suggestions
+     */
+    useEffect(() => {
+        if (props.loginReducer.userState.user.id === 0) {
+            return;
+        }
+
+        if (props.loginReducer.userState.user.role === RoleEnum.USER) {
+            return;
+        }
+
+        axios
+            .get("/user/manage/getUsers")
+            .then((response) => {
+                if (!responseIsSuccess(response)) {
+                    alertResponseMessages(response);
+                    return;
+                }
+
+                setUserOptions(response.data.users);
+            }, (error) => {
+                alert(error);
+            })
+
+    }, [props.loginReducer.userState.user.id]);
+
+    /**
+     * Step 2 page is reloaded when userId is changed
      */
     useEffect(() => {
         if (props.loginReducer.userState.user.id === 0) {
@@ -71,7 +93,7 @@ function UsersPage(props) {
     }, [props.match.params.userId, props.loginReducer.userState.user.id]);
 
     /**
-     * Step 4 performLoadUser will update the targetUser, and this will trigger the
+     * Step 3 performLoadUser will update the targetUser, and this will trigger the
      * re-rendering of our components
      */
     useEffect(() => {
@@ -83,22 +105,6 @@ function UsersPage(props) {
             repeat_password: ""
         })
     }, [targetUser]);
-
-    /**
-     * Step 1 Change the User Id
-     * @param value
-     */
-    const onChangeInputUserId = (value) => {
-        setInputUserId(value);
-    }
-
-    /**
-     * Step 2 Press enter on User Id and trigger page reload by changing
-     * :noteId at /users/:noteId
-     */
-    const onEnterInputUserId = () => {
-        props.history.push("/users/" + inputUserId);
-    }
 
     const handleCancelForm = () => {
         performLoadUser();
@@ -165,17 +171,44 @@ function UsersPage(props) {
             });
     }
 
+    const [userOptions, setUserOptions] = useState([]);
+
+    /**
+     * Step 1 Select a username from the dropdown and trigger page reload by changing
+     * :noteId at /users/:noteId
+     * @param value
+     */
+    const onSelectChange = (value) => {
+        const userOptionsUsernames = userOptions.map(user => user.username);
+        const index = userOptionsUsernames.indexOf(value);
+        const userOption = userOptions[index];
+
+        props.history.push("/users/" + userOption.id);
+    }
+
     return (
         <div>
             <Space direction="vertical" size={25}>
                 {props.match.params.userId &&
-                <InputNumber
-                    min={1}
+                <Select
+                    showSearch
                     style={{width: "100%"}}
-                    placeholder="User Id"
-                    onChange={onChangeInputUserId}
-                    onPressEnter={onEnterInputUserId}
-                />}
+                    placeholder="User"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                    onChange={onSelectChange}
+                >
+                    {userOptions.map((user, index) => {
+                        return (
+                            <Select.Option value={user.username} key={index}>
+                                {user.username}
+                            </Select.Option>
+                        );
+                    })}
+                </Select>}
+
                 <Form
                     form={form}
                     name="user_form"
@@ -209,7 +242,7 @@ function UsersPage(props) {
                         <Input.Password
                             prefix={<LockOutlined className="site-form-item-icon"/>}
                             type="password"
-                            placeholder="Password"
+                            placeholder="New Password"
                         />
                     </Form.Item>
 
@@ -220,7 +253,7 @@ function UsersPage(props) {
                         <Input.Password
                             prefix={<LockOutlined className="site-form-item-icon"/>}
                             type="password"
-                            placeholder="Repeat Password"
+                            placeholder="Repeat New Password"
                         />
                     </Form.Item>
 
