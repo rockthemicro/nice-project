@@ -206,6 +206,9 @@ function NotesPage(props) {
      * Step 2 Page gets reloaded when the targeted user id changes
      */
     useEffect(() => {
+        if (props.loginReducer.userState.user.id === 0) {
+            return;
+        }
         performGetNotes(true);
     }, [enteredTargetUserId]);
 
