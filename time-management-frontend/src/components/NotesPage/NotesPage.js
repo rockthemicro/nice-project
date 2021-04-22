@@ -3,8 +3,8 @@ import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import {compose} from "redux";
 import {Button, DatePicker, Select, Space, Table} from "antd";
-import RoleEnum from "../../RoleEnum";
-import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
+import RoleEnum from "../../common/RoleEnum";
+import {alertResponseMessages, responseIsSuccess} from "../../common/ResponseUtils";
 import exportNotes from "./exportNotes";
 import fileDownload from 'js-file-download'
 import axios from "axios";

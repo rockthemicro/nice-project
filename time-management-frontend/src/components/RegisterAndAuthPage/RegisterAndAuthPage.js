@@ -7,8 +7,8 @@ import 'antd/dist/antd.css';
 import loginAction from "../../actions/loginAction";
 import {compose} from "redux";
 import {withRouter} from "react-router-dom";
-import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
-import RoleEnum from "../../RoleEnum";
+import {alertResponseMessages, responseIsSuccess} from "../../common/ResponseUtils";
+import RoleEnum from "../../common/RoleEnum";
 import axios from "axios";
 
 const mapStateToProps = (state) => ({

@@ -1,6 +1,5 @@
 import StatusEnum from "./StatusEnum";
 
-// TODO add a nicer alert logger at the end
 const alertResponseMessages = (response) => {
     let output = "";
 

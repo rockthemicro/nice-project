@@ -6,7 +6,7 @@ import {BrowserRouter} from "react-router-dom";
 import {Provider} from 'react-redux';
 import configureStore from "./configureStore";
 import axios from "axios";
-import RoleEnum from "./RoleEnum";
+import RoleEnum from "./common/RoleEnum";
 
 const initialUserState = {
     token: "",

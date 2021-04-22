@@ -1,6 +1,6 @@
-import RoleEnum from "../RoleEnum";
+import RoleEnum from "./RoleEnum";
 import axios from "axios";
-import {alertResponseMessages, responseIsSuccess} from "../ResponseUtils";
+import {alertResponseMessages, responseIsSuccess} from "./ResponseUtils";
 
 const getUsers = (user, setUserOptions) => {
     if (user.id === 0) {

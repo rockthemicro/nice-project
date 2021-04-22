@@ -11,7 +11,7 @@ import {
 import {compose} from "redux";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import RoleEnum from "../../RoleEnum";
+import RoleEnum from "../../common/RoleEnum";
 import loginAction from "../../actions/loginAction";
 
 const mapStateToProps = (state) => ({
