@@ -62,6 +62,9 @@ function NotesPage(props) {
         );
     }
 
+    /**
+     * Beginning: Page gets reloaded whenever there's a change in startDate/endDate/logged user id
+     */
     useEffect(() => {
         if (props.loginReducer.userState.user.id === 0) {
             return;
@@ -189,6 +192,9 @@ function NotesPage(props) {
             })
     }
 
+    /**
+     * Step 2 Page gets reloaded when the targeted user id changes
+     */
     useEffect(() => {
         performGetNotes(true);
     }, [enteredTargetUserId]);
@@ -196,7 +202,7 @@ function NotesPage(props) {
     const [userOptions, setUserOptions] = useState([]);
 
     /**
-     * Fill the User Suggestions
+     * Fill the User Suggestions at the beginning
      */
     useEffect(() => {
         getUsers(props.loginReducer.userState.user, setUserOptions);
@@ -250,7 +256,7 @@ function NotesPage(props) {
                 </Space>
                 <Table
                     columns={columns}
-                    dataSource={data}
+                    dataSource={data} // Step 3 Table gets reloaded
                     size="middle"
                     pagination={false}
                     scroll={{y: '30vw', scrollToFirstRowOnChange: true}}
