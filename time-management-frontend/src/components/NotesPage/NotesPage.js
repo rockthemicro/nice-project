@@ -2,12 +2,13 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import {compose} from "redux";
-import {Button, DatePicker, InputNumber, Space, Table} from "antd";
+import {Button, DatePicker, Select, Space, Table} from "antd";
 import RoleEnum from "../../RoleEnum";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
 import exportNotes from "./exportNotes";
 import fileDownload from 'js-file-download'
 import axios from "axios";
+import {getUsers} from "../../common/Utils";
 
 const mapStateToProps = (state) => ({
     loginReducer: state.loginReducer
@@ -49,7 +50,6 @@ function NotesPage(props) {
     const [data, setData] = useState([]);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const [targetUserId, setTargetUserId] = useState(0);
     const [enteredTargetUserId, setEnteredTargetUserId] = useState(0);
 
 
@@ -77,7 +77,7 @@ function NotesPage(props) {
     const performGetNotes = (weAreAdmin) => {
         setData([]);
 
-        if (weAreAdmin && (!targetUserId || targetUserId <= 0)) {
+        if (weAreAdmin && (!enteredTargetUserId || enteredTargetUserId <= 0)) {
             return;
         }
 
@@ -92,7 +92,7 @@ function NotesPage(props) {
         }
 
         if (weAreAdmin) {
-            params["userId"] = targetUserId;
+            params["userId"] = enteredTargetUserId;
         }
 
         let url = weAreAdmin ? "/note/getNotesForUser" : "/note/getNotes";
@@ -189,32 +189,56 @@ function NotesPage(props) {
             })
     }
 
-    const onChangeTargetUserId = (value) => {
-        setTargetUserId(value);
-    }
-
-    const onEnterTargetUserId = () => {
-        setEnteredTargetUserId(targetUserId);
-    }
-
     useEffect(() => {
         performGetNotes(true);
     }, [enteredTargetUserId]);
+
+    const [userOptions, setUserOptions] = useState([]);
+
+    /**
+     * Fill the User Suggestions
+     */
+    useEffect(() => {
+        getUsers(props.loginReducer.userState.user, setUserOptions);
+    }, [props.loginReducer.userState.user.id]);
+
+    /**
+     * Step 1 Select a username from the dropdown and trigger page reload
+     * @param value
+     */
+    const onSelectChange = (value) => {
+        const userOptionsUsernames = userOptions.map(user => user.username);
+        const index = userOptionsUsernames.indexOf(value);
+        const userOption = userOptions[index];
+
+        setEnteredTargetUserId(userOption.id);
+    }
 
     return (
         <div>
             <Space direction="vertical">
                 <br/>
                 <Space>
-                    {
-                        props.loginReducer.userState.user.role === RoleEnum.ADMIN &&
-                        <InputNumber
-                            name="targetUserId"
-                            placeholder="User Id"
-                            onChange={onChangeTargetUserId}
-                            onPressEnter={onEnterTargetUserId}
-                        />
-                    }
+                    {props.loginReducer.userState.user.role === RoleEnum.ADMIN &&
+                    <Select
+                        showSearch
+                        style={{width: "200px"}}
+                        placeholder="Target Username"
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        }
+                        onChange={onSelectChange}
+                    >
+                        {userOptions.map((user, index) => {
+                            return (
+                                <Select.Option value={user.username} key={index}>
+                                    {user.username}
+                                </Select.Option>
+                            );
+                        })}
+                    </Select>}
+
                     <DatePicker placeholder="Start Date" onChange={onChangeStartDate}/>
                     <DatePicker placeholder="End Date" onChange={onChangeEndDate}/>
                     <Button type="primary" onClick={handleExport}>

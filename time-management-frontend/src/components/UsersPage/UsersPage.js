@@ -8,6 +8,7 @@ import RoleEnum from "../../RoleEnum";
 import {alertResponseMessages, responseIsSuccess} from "../../ResponseUtils";
 import loginAction from "../../actions/loginAction";
 import axios from "axios";
+import {getUsers} from "../../common/Utils";
 
 
 const mapStateToProps = (state) => ({
@@ -56,30 +57,10 @@ function UsersPage(props) {
     }
 
     /**
-     * Fill the User Suggestions
+     * Fill the User Suggestions (it fills the userOptions state variable)
      */
     useEffect(() => {
-        if (props.loginReducer.userState.user.id === 0) {
-            return;
-        }
-
-        if (props.loginReducer.userState.user.role === RoleEnum.USER) {
-            return;
-        }
-
-        axios
-            .get("/user/manage/getUsers")
-            .then((response) => {
-                if (!responseIsSuccess(response)) {
-                    alertResponseMessages(response);
-                    return;
-                }
-
-                setUserOptions(response.data.users);
-            }, (error) => {
-                alert(error);
-            })
-
+        getUsers(props.loginReducer.userState.user, setUserOptions);
     }, [props.loginReducer.userState.user.id]);
 
     /**
