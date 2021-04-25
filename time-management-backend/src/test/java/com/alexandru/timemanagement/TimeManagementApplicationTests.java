@@ -69,7 +69,8 @@ class TimeManagementApplicationTests {
 				"user1",
 				bCryptPasswordEncoder.encode("passwd"),
 				User.RoleEnum.USER,
-				1);
+				1,
+				null);
 		user = userRepository.save(user);
 		perTestUsers.add(user);
 
@@ -78,7 +79,8 @@ class TimeManagementApplicationTests {
 				"user2",
 				bCryptPasswordEncoder.encode("passwd"),
 				User.RoleEnum.MANAGER,
-				2);
+				2,
+				null);
 		user = userRepository.save(user);
 		perTestUsers.add(user);
 
@@ -87,7 +89,8 @@ class TimeManagementApplicationTests {
 				"user3",
 				bCryptPasswordEncoder.encode("passwd"),
 				User.RoleEnum.ADMIN,
-				3);
+				3,
+				null);
 		user = userRepository.save(user);
 		perTestUsers.add(user);
 

@@ -112,6 +112,7 @@ function EditNote(props) {
                 >
                     <InputNumber
                         min={0}
+                        max={24}
                         placeholder={"Hours"}
                         style={{width: "100%"}}
                     />

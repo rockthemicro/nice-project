@@ -245,6 +245,7 @@ function UsersPage(props) {
                         <InputNumber
                             style={{width: "100%"}}
                             min={1}
+                            max={24}
                             placeholder="Preferred Working Hours"
                         />
                     </Form.Item>

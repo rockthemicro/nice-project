@@ -58,6 +58,7 @@ public class UserService {
                 registerInput.getUsername(),
                 bCryptPasswordEncoder.encode(registerInput.getPassword()),
                 User.RoleEnum.USER,
+                null,
                 null);
 
         newUser = userRepository.save(newUser);
